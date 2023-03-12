@@ -4,8 +4,20 @@
         fn access(&mut self, x: u8) -> u8;
     }
     
-    // fn access_search(list: &Vec<u8>, x: u8) -> (u8, u8, usize) {
-    //     //
+    // fn access_search(list: &Vec<u8>, x: u8) -> (u8, usize) {
+    //     let mut cost: u8 = 0;
+    //     let mut i = 0;
+    //     let n = list.len();
+    //     while i < n && list[i] != x {
+    //         cost += 1;
+    //         i += 1;
+    //     }
+    //     if i == n {
+    //         list.insert(n, x);
+    //     } else {
+    //         cost += 1;
+    //     }
+    //     return (cost, i);
     // }
     
     pub struct ULClassic {
@@ -28,6 +40,7 @@
             } else {
                 cost += 1;
             }
+            // let (cost, _) = access_search(self.list, x);
             return cost;
         }
     }
