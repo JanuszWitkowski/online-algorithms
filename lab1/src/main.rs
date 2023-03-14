@@ -1,11 +1,19 @@
 mod update_list;
 use update_list::UpdateList;
+mod distribution;
+use distribution::Distribution;
 
 fn test_trait (ul: &mut dyn update_list::UpdateList) {
     ul.print();
 }
 
 fn main() {
+    let ds = distribution::Uniform::new(1, 100);
+    print!("Random: ");
+    for _ in 0..10 {
+        print!("{} ", ds.get());
+    }
+    println!();
     // let mut ul = update_list::ULClassic::new();
     // let mut ul = update_list::ULMoveToFront::new();
     // let mut ul = update_list::ULTranspose::new();
