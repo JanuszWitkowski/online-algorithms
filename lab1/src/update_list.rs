@@ -2,6 +2,7 @@ pub trait UpdateList {
     fn new() -> Self where Self: Sized;
     fn access(&mut self, x: u8) -> u8;
     fn print(&mut self);
+    fn clear(&mut self);
 }
 
 fn access_search(list: &mut Vec<u8>, x: u8) -> (u8, usize, bool) {
@@ -31,6 +32,14 @@ fn print_list(list: &Vec<u8>) {
     println!(" ]");
 }
 
+
+pub enum UpdateListType {
+    Classic,
+    MoveToFront,
+    Transpose,
+    Count,
+}
+
 pub struct ULClassic {
     list: Vec<u8>,
 }
@@ -44,6 +53,9 @@ impl UpdateList for ULClassic {
     }
     fn print(&mut self) {
         print_list(&self.list);
+    }
+    fn clear(&mut self) {
+        self.list.clear();
     }
 }
 
@@ -62,6 +74,9 @@ impl UpdateList for ULMoveToFront {
     }
     fn print(&mut self) {
         print_list(&self.list);
+    }
+    fn clear(&mut self) {
+        self.list.clear();
     }
 }
 
@@ -82,6 +97,9 @@ impl UpdateList for ULTranspose {
     }
     fn print(&mut self) {
         print_list(&self.list);
+    }
+    fn clear(&mut self) {
+        self.list.clear();
     }
 }
 
@@ -115,6 +133,10 @@ impl UpdateList for ULCount {
             print!(" {}({})", self.list[i], self.freq[i]);
         }
         println!(" ]");
+    }
+    fn clear(&mut self) {
+        self.list.clear();
+        self.freq.clear();
     }
 }
 
