@@ -19,12 +19,12 @@ pub enum DistributionType {
     TwoHarmonic,
 }
 
-pub fn distribution_constructor(dist_type: DistributionType, low: u8, high: u8) -> Box<dyn Distribution> {
+pub fn distribution_constructor(dist_type: DistributionType, low: u8, high: u8) -> Box<&'static dyn Distribution> {
     match dist_type {
-        DistributionType::Uniform => Box::new(Uniform::new(low, high)),
-        DistributionType::Geometric => Box::new(Geometric::new(low, high)),
-        DistributionType::Harmonic => Box::new(Harmonic::new(low, high)),
-        DistributionType::TwoHarmonic => Box::new(TwoHarmonic::new(low, high)),
+        DistributionType::Uniform => Box::new(&Uniform::new(low, high)),
+        DistributionType::Geometric => Box::new(&Geometric::new(low, high)),
+        DistributionType::Harmonic => Box::new(&Harmonic::new(low, high)),
+        DistributionType::TwoHarmonic => Box::new(&TwoHarmonic::new(low, high)),
     }
 }
 

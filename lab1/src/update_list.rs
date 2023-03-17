@@ -5,6 +5,7 @@ pub trait UpdateList {
     fn access(&mut self, x: u8) -> u8;
     fn print(&mut self);
     fn clear(&mut self);
+    fn name(&mut self) -> &'static str;
 }
 
 
@@ -16,21 +17,26 @@ pub enum UpdateListType {
     Count,
 }
 
-pub fn update_list_constructor (list_type: UpdateListType) -> Box<dyn UpdateList> {
+const NAME_CLASSIC: &'static str = "classic";
+const NAME_MOVE_TO_FRONT: &'static str = "move-to-front";
+const NAME_TRANSPOSE: &'static str = "transpose";
+const NAME_COUNT: &'static str = "count";
+
+pub fn update_list_constructor (list_type: UpdateListType) -> Box<&'static mut dyn UpdateList> {
     match list_type {
-        UpdateListType::Classic => Box::new(ULClassic::new()),
-        UpdateListType::MoveToFront => Box::new(ULMoveToFront::new()),
-        UpdateListType::Transpose => Box::new(ULTranspose::new()),
-        UpdateListType::Count => Box::new(ULCount::new()),
+        UpdateListType::Classic => Box::new(&mut ULClassic::new()),
+        UpdateListType::MoveToFront => Box::new(&mut ULMoveToFront::new()),
+        UpdateListType::Transpose => Box::new(&mut ULTranspose::new()),
+        UpdateListType::Count => Box::new(&mut ULCount::new()),
     }
 }
 
 pub fn update_list_name (list_type: UpdateListType) -> &'static str {
     match list_type {
-        UpdateListType::Classic => "classic",
-        UpdateListType::MoveToFront => "move-to-front",
-        UpdateListType::Transpose => return "transpose",
-        UpdateListType::Count => return "count",
+        UpdateListType::Classic => NAME_CLASSIC,
+        UpdateListType::MoveToFront => NAME_MOVE_TO_FRONT,
+        UpdateListType::Transpose => return NAME_TRANSPOSE,
+        UpdateListType::Count => return NAME_COUNT,
     }
 }
 
@@ -82,6 +88,9 @@ impl UpdateList for ULClassic {
     fn clear(&mut self) {
         self.list.clear();
     }
+    fn name(&mut self) -> &'static str {
+        NAME_CLASSIC
+    }
 }
 
 pub struct ULMoveToFront {
@@ -102,6 +111,9 @@ impl UpdateList for ULMoveToFront {
     }
     fn clear(&mut self) {
         self.list.clear();
+    }
+    fn name(&mut self) -> &'static str {
+        NAME_MOVE_TO_FRONT
     }
 }
 
@@ -125,6 +137,9 @@ impl UpdateList for ULTranspose {
     }
     fn clear(&mut self) {
         self.list.clear();
+    }
+    fn name(&mut self) -> &'static str {
+        NAME_TRANSPOSE
     }
 }
 
@@ -162,6 +177,9 @@ impl UpdateList for ULCount {
     fn clear(&mut self) {
         self.list.clear();
         self.freq.clear();
+    }
+    fn name(&mut self) -> &'static str {
+        NAME_COUNT
     }
 }
 
