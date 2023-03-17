@@ -33,7 +33,7 @@ fn print_list(list: &Vec<u8>) {
 }
 
 
-pub enum UpdateListType {
+pub enum _UpdateListType {
     Classic,
     MoveToFront,
     Transpose,

@@ -4,7 +4,7 @@ mod distribution;
 use distribution::Distribution;
 
 const NS: [usize; 7] = [100, 500, 1000, 5000, 10000, 50000, 100000];
-const ITER: usize = 1000000;
+const ITER: usize = 1_000_000;
 const LOW: u8 = 1;
 const HIGH: u8 = 100;
 
@@ -21,16 +21,21 @@ fn experiment_average_access_cost (ul: &mut dyn update_list::UpdateList,
 }
 
 fn main() {
-    let mut ul = update_list::ULClassic::new();
+    // let mut ul = update_list::ULClassic::new();
     // let mut ul = update_list::ULMoveToFront::new();
     // let mut ul = update_list::ULTranspose::new();
-    // let mut ul = update_list::ULCount::new();
-    let ds = distribution::Uniform::new(LOW, HIGH);
+    let mut ul = update_list::ULCount::new();
+    // let ds = distribution::Uniform::new(LOW, HIGH);
+    let ds = distribution::Geometric::new(LOW, HIGH);
     // ul.print();
     // for _ in 0..20 {
     //     test_trait(&mut ul, &ds);
     // }
-    println!("{}", experiment_average_access_cost(&mut ul, &ds, NS[0], ITER));
+    for _ in 0..100_000_000 {
+        ul.access(ds.get());
+    }
+    ul.print();
+    // println!("{}", experiment_average_access_cost(&mut ul, &ds, NS[0], ITER));
 
     // let ff: f64 = (10.0_f64.powf(13.0) - 5000.0) / 10.0_f64.powf(11.0);
     // println!("f64: {}", ff);
