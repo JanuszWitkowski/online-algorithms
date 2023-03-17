@@ -1,3 +1,5 @@
+// TRAIT
+// Each UpdateList has to implement Access function. Clear is for tests. Print is for debugging.
 pub trait UpdateList {
     fn new() -> Self where Self: Sized;
     fn access(&mut self, x: u8) -> u8;
@@ -5,6 +7,35 @@ pub trait UpdateList {
     fn clear(&mut self);
 }
 
+
+// ENUM
+pub enum UpdateListType {
+    Classic,
+    MoveToFront,
+    Transpose,
+    Count,
+}
+
+pub fn update_list_constructor (list_type: UpdateListType) -> Box<dyn UpdateList> {
+    match list_type {
+        UpdateListType::Classic => Box::new(ULClassic::new()),
+        UpdateListType::MoveToFront => Box::new(ULMoveToFront::new()),
+        UpdateListType::Transpose => Box::new(ULTranspose::new()),
+        UpdateListType::Count => Box::new(ULCount::new()),
+    }
+}
+
+pub fn update_list_name (list_type: UpdateListType) -> &'static str {
+    match list_type {
+        UpdateListType::Classic => "classic",
+        UpdateListType::MoveToFront => "move-to-front",
+        UpdateListType::Transpose => return "transpose",
+        UpdateListType::Count => return "count",
+    }
+}
+
+
+// HELPER FUNCTIONS
 fn access_search(list: &mut Vec<u8>, x: u8) -> (u8, usize, bool) {
     let mut cost: u8 = 0;
     let mut i = 0;
@@ -33,13 +64,7 @@ fn print_list(list: &Vec<u8>) {
 }
 
 
-pub enum _UpdateListType {
-    Classic,
-    MoveToFront,
-    Transpose,
-    Count,
-}
-
+// IMPLEMENTATIONS
 pub struct ULClassic {
     list: Vec<u8>,
 }
