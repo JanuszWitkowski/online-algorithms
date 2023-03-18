@@ -17,28 +17,28 @@ pub enum UpdateListType {
     Count,
 }
 
-const NAME_CLASSIC: &'static str = "classic";
-const NAME_MOVE_TO_FRONT: &'static str = "move-to-front";
-const NAME_TRANSPOSE: &'static str = "transpose";
-const NAME_COUNT: &'static str = "count";
+pub const NAME_CLASSIC: &'static str = "classic";
+pub const NAME_MOVE_TO_FRONT: &'static str = "move-to-front";
+pub const NAME_TRANSPOSE: &'static str = "transpose";
+pub const NAME_COUNT: &'static str = "count";
 
-pub fn update_list_constructor (list_type: UpdateListType) -> Box<&'static mut dyn UpdateList> {
-    match list_type {
-        UpdateListType::Classic => Box::new(&mut ULClassic::new()),
-        UpdateListType::MoveToFront => Box::new(&mut ULMoveToFront::new()),
-        UpdateListType::Transpose => Box::new(&mut ULTranspose::new()),
-        UpdateListType::Count => Box::new(&mut ULCount::new()),
-    }
-}
+// pub fn update_list_constructor (list_type: UpdateListType) -> Box<&'static mut dyn UpdateList> {
+//     match list_type {
+//         UpdateListType::Classic => Box::new(&mut ULClassic::new()),
+//         UpdateListType::MoveToFront => Box::new(&mut ULMoveToFront::new()),
+//         UpdateListType::Transpose => Box::new(&mut ULTranspose::new()),
+//         UpdateListType::Count => Box::new(&mut ULCount::new()),
+//     }
+// }
 
-pub fn update_list_name (list_type: UpdateListType) -> &'static str {
-    match list_type {
-        UpdateListType::Classic => NAME_CLASSIC,
-        UpdateListType::MoveToFront => NAME_MOVE_TO_FRONT,
-        UpdateListType::Transpose => return NAME_TRANSPOSE,
-        UpdateListType::Count => return NAME_COUNT,
-    }
-}
+// pub fn update_list_name (list_type: UpdateListType) -> &'static str {
+//     match list_type {
+//         UpdateListType::Classic => NAME_CLASSIC,
+//         UpdateListType::MoveToFront => NAME_MOVE_TO_FRONT,
+//         UpdateListType::Transpose => return NAME_TRANSPOSE,
+//         UpdateListType::Count => return NAME_COUNT,
+//     }
+// }
 
 
 // HELPER FUNCTIONS
