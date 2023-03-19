@@ -8,7 +8,7 @@ pub trait UpdateList {
     fn name(&mut self) -> &'static str;
 }
 
-
+// Names for file naming.
 const NAME_CLASSIC: &'static str = "classic";
 const NAME_MOVE_TO_FRONT: &'static str = "move-to-front";
 const NAME_TRANSPOSE: &'static str = "transpose";

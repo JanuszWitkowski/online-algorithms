@@ -13,8 +13,6 @@ const ITER: usize = 1_000_000;
 // const ITER: usize = 1;
 
 // Range used in random number generation in {1, ..., 100}
-// const LOW: u8 = 1;
-// const HIGH: u8 = 100;
 const LIMIT: u8 = 100;
 
 

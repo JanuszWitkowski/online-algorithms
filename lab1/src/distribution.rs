@@ -1,6 +1,6 @@
 // NOTE: There is a library for distributions:
 // use rand::distributions::{Distribution, Standard, Uniform};
-// It is not used here to implement it myself, just for fun.
+// It is not used here - implemented them myself, just for fun.
 use rand::Rng; // 0.8.5
 // const mut rng = rand::thread_rng();
 
@@ -11,7 +11,7 @@ pub trait Distribution {
     fn name(&self) -> &'static str;
 }
 
-
+// Names for file naming.
 const NAME_UNIFORM: &'static str = "uniform";
 const NAME_GEOMETRIC: &'static str = "geometric";
 const NAME_HARMONIC: &'static str = "harmonic";
@@ -101,16 +101,15 @@ impl Distribution for Harmonic {
     }
 }
 
+// Here ranges will be used, instead of inverse of CDF.
 fn calculate_harmonic_cdf (n: usize) -> Vec<f64> {
     let mut hs: Vec<f64> = vec![1.0];
     for i in 1..n {
         hs.push(hs[i-1] + (1.0 / (i+1) as f64));
-        // println!("hs[{}]: {}", i, hs[i]);
     }
     let hn = hs[n-1];
     for i in 0..n {
         hs[i] /= hn;
-        // println!("New hs[{}]: {}", i, hs[i]);
     }
     return hs;
 }
