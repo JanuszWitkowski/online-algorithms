@@ -81,25 +81,27 @@ fn inv_cdf_geometric (x: f64, p: f64) -> u32 {
 pub struct Harmonic {
     limit: u8,
     hs: Vec<f64>,
-    hn: f64,
 }
 impl Distribution for Harmonic {
     fn new(limit: u8) -> Self {
         let limit_sanitised = sanitise_bounds(limit);
-        let (hs, hn) = calculate_harmonic_cdf(limit as usize);
-        return Harmonic { limit: limit_sanitised, hs: hs, hn: hn };
+        let hs = calculate_harmonic_cdf(limit as usize);
+        return Harmonic { limit: limit_sanitised, hs: hs };
     }
-    fn get(&self) -> u8 {   //TODO
-        let mut x: f64 = rand::thread_rng().gen();
-        // for 
-        return 0;
+    fn get(&self) -> u8 {
+        let x: f64 = rand::thread_rng().gen();
+        let mut idx: usize = 0;
+        while idx < self.limit as usize && self.hs[idx] < x {
+            idx += 1;
+        }
+        return idx as u8 + 1;
     }
     fn name(&self) -> &'static str {
         NAME_HARMONIC
     }
 }
 
-fn calculate_harmonic_cdf (n: usize) -> (Vec<f64>, f64) {
+fn calculate_harmonic_cdf (n: usize) -> Vec<f64> {
     let mut hs: Vec<f64> = vec![1.0];
     for i in 1..n {
         hs.push(hs[i-1] + (1.0 / (i+1) as f64));
@@ -108,32 +110,36 @@ fn calculate_harmonic_cdf (n: usize) -> (Vec<f64>, f64) {
     let hn = hs[n-1];
     for i in 0..n {
         hs[i] /= hn;
-        println!("New hs[{}]: {}", i, hs[i]);
+        // println!("New hs[{}]: {}", i, hs[i]);
     }
-    return (hs, hn);
+    return hs;
 }
 
 
 pub struct TwoHarmonic {
     limit: u8,
     hs: Vec<f64>,
-    hn: f64,
 }
 impl Distribution for TwoHarmonic {
     fn new(limit: u8) -> Self {
         let limit_sanitised = sanitise_bounds(limit);
-        let (hs, hn) = calculate_generalized_harmonic_cdf(limit as usize, 2.0);
-        return TwoHarmonic { limit: limit_sanitised, hs: hs, hn: hn };
+        let hs = calculate_generalized_harmonic_cdf(limit as usize, 2.0);
+        return TwoHarmonic { limit: limit_sanitised, hs: hs };
     }
-    fn get(&self) -> u8 {   //TODO
-        return 0;
+    fn get(&self) -> u8 {
+        let x: f64 = rand::thread_rng().gen();
+        let mut idx: usize = 0;
+        while idx < self.limit as usize && self.hs[idx] < x {
+            idx += 1;
+        }
+        return idx as u8 + 1;
     }
     fn name(&self) -> &'static str {
         NAME_TWOHARMONIC
     }
 }
 
-fn calculate_generalized_harmonic_cdf (n: usize, e: f64) -> (Vec<f64>, f64) {
+fn calculate_generalized_harmonic_cdf (n: usize, e: f64) -> Vec<f64> {
     let mut hs: Vec<f64> = vec![1.0];
     for i in 1..n {
         hs.push(hs[i-1] + (1.0 / ((i+1) as f64).powf(e)));
@@ -142,5 +148,5 @@ fn calculate_generalized_harmonic_cdf (n: usize, e: f64) -> (Vec<f64>, f64) {
     for i in 0..n {
         hs[i] /= hn;
     }
-    return (hs, hn);
+    return hs;
 }
