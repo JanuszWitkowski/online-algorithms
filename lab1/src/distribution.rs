@@ -8,34 +8,14 @@ use rand::Rng; // 0.8.5
 pub trait Distribution {
     fn new(low: u8, high: u8) -> Self where Self: Sized;
     fn get(&self) -> u8;
+    fn name(&self) -> &'static str;
 }
 
 
-// ENUM
-pub enum DistributionType {
-    Uniform,
-    Geometric,
-    Harmonic,
-    TwoHarmonic,
-}
-
-// pub fn distribution_constructor(dist_type: DistributionType, low: u8, high: u8) -> Box<&'static dyn Distribution> {
-//     match dist_type {
-//         DistributionType::Uniform => Box::new(&Uniform::new(low, high)),
-//         DistributionType::Geometric => Box::new(&Geometric::new(low, high)),
-//         DistributionType::Harmonic => Box::new(&Harmonic::new(low, high)),
-//         DistributionType::TwoHarmonic => Box::new(&TwoHarmonic::new(low, high)),
-//     }
-// }
-
-// pub fn distribution_name(dist_type: DistributionType) -> &'static str {
-//     match dist_type {
-//         DistributionType::Uniform => "uniform",
-//         DistributionType::Geometric => "geometric",
-//         DistributionType::Harmonic => "harmonic",
-//         DistributionType::TwoHarmonic => "twoharmonic",
-//     }
-// }
+const NAME_UNIFORM: &'static str = "uniform";
+const NAME_GEOMETRIC: &'static str = "geometric";
+const NAME_HARMONIC: &'static str = "harmonic";
+const NAME_TWOHARMONIC: &'static str = "twoharmonic";
 
 
 // HELPER FUNCTIONS
@@ -66,6 +46,9 @@ impl Distribution for Uniform {
     fn get(&self) -> u8 {
         return rand::thread_rng().gen_range(self.low..=self.high);
     }
+    fn name(&self) -> &'static str {
+        NAME_UNIFORM
+    }
 }
 
 
@@ -90,6 +73,9 @@ impl Distribution for Geometric {
         }
         return v as u8;
     }
+    fn name(&self) -> &'static str {
+        NAME_GEOMETRIC
+    }
 }
 
 // The inverse of cumulative distribution function for Geometric distribution.
@@ -113,6 +99,9 @@ impl Distribution for Harmonic {
     fn get(&self) -> u8 {   //TODO
         return 0;
     }
+    fn name(&self) -> &'static str {
+        NAME_HARMONIC
+    }
 }
 
 fn calculate_harmonic_number (n: usize, acc: f64) -> f64 {
@@ -135,6 +124,9 @@ impl Distribution for TwoHarmonic {
     }
     fn get(&self) -> u8 {   //TODO
         return 0;
+    }
+    fn name(&self) -> &'static str {
+        NAME_TWOHARMONIC
     }
 }
 
