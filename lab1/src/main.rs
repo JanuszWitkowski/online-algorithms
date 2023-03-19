@@ -2,15 +2,15 @@ mod update_list;
 use update_list::UpdateList;
 mod distribution;
 use distribution::Distribution;
-use std::fs::File;
+use std::fs::{File, create_dir_all};
 use std::io::Write;
 
 // Numbers of operations
 const NS: [usize; 7] = [100, 500, 1000, 5000, 10000, 50000, 100000];
 
 // Number of iterations
-// const ITER: usize = 1_000_000;
-const ITER: usize = 1;
+const ITER: usize = 1_000_000;
+// const ITER: usize = 1;
 
 // Range used in random number generation in {1, ..., 100}
 const LOW: u8 = 1;
@@ -30,7 +30,7 @@ fn experiment_average_access_cost (ul: &mut dyn update_list::UpdateList,
 }
 
 
-fn main() {
+fn main() -> std::io::Result<()> {
     // Set up.
     let mut ul_classic = update_list::ULClassic::new();
     let mut ul_move_to_front = update_list::ULMoveToFront::new();
@@ -45,7 +45,11 @@ fn main() {
     let mut cost: f64;
 
     // Write set of ns to file, for future data analysis.
-    let mut filename = format!("ns.txt");
+    match create_dir_all("results") {
+        Err(e) => panic!("Could not create directory! {:?}", e),
+        _ => (),
+    };
+    let mut filename = format!("results/ns.txt");
     let output = File::create(filename);
     let mut output = match output {
         Ok(file) => file,
@@ -58,8 +62,8 @@ fn main() {
     // Perform multiple experiments.
     for ul in update_lists {
         for ds in distributions {
-            filename = format!("data_{}_{}.txt", ul.name(), ds.name());
-            println!("Creating {}...", filename);
+            filename = format!("results/data_{}_{}.txt", ul.name(), ds.name());
+            println!("Writing {}...", filename);
             let output = File::create(filename);
             let mut output = match output {
                 Ok(file) => file,
@@ -72,4 +76,5 @@ fn main() {
         }
     }
     println!("Done!");
+    Ok(())
 }
