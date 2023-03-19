@@ -13,8 +13,9 @@ const ITER: usize = 1_000_000;
 // const ITER: usize = 1;
 
 // Range used in random number generation in {1, ..., 100}
-const LOW: u8 = 1;
-const HIGH: u8 = 100;
+// const LOW: u8 = 1;
+// const HIGH: u8 = 100;
+const LIMIT: u8 = 100;
 
 
 fn experiment_average_access_cost (ul: &mut dyn update_list::UpdateList,
@@ -36,10 +37,10 @@ fn main() -> std::io::Result<()> {
     let mut ul_move_to_front = update_list::ULMoveToFront::new();
     let mut ul_transpose = update_list::ULTranspose::new();
     let mut ul_count = update_list::ULCount::new();
-    let ds_uniform = distribution::Uniform::new(LOW, HIGH);
-    let ds_geometric = distribution::Geometric::new(LOW, HIGH);
-    let ds_harmonic = distribution::Harmonic::new(LOW, HIGH);
-    let ds_two_harmonic = distribution::TwoHarmonic::new(LOW, HIGH);
+    let ds_uniform = distribution::Uniform::new(LIMIT);
+    let ds_geometric = distribution::Geometric::new(LIMIT);
+    let ds_harmonic = distribution::Harmonic::new(LIMIT);
+    let ds_two_harmonic = distribution::TwoHarmonic::new(LIMIT);
     let update_lists: [&mut dyn UpdateList; 4] = [&mut ul_classic, &mut ul_move_to_front, &mut ul_transpose, &mut ul_count];
     let distributions: [&dyn Distribution; 4] = [&ds_uniform, &ds_geometric, &ds_harmonic, &ds_two_harmonic];
     let mut cost: f64;
