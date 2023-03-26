@@ -18,6 +18,8 @@ def create_plot (files: List[str], search: str, ns: List[Number]):
     for filename in files_searched:
         # plt.plot(ns, open_floats(filename), label=proper_name(filename))
         plt.plot(np.array(ns).astype('str'), open_floats(filename), label=proper_name(filename))
+    plt.xlabel("Liczba operacji w eksperymencie [n]")
+    plt.ylabel("Średni koszt operacji access(x)")
     plt.legend()
     plt.title(search)
     plt.savefig(search + '.png')
