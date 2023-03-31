@@ -9,13 +9,20 @@ pub trait Distribution {
     fn new(limit: u8) -> Self where Self: Sized;
     fn get(&self) -> u8;
     fn name(&self) -> &'static str;
+    fn ev(&self, iter: usize) -> f64 {
+        let mut sum: f64 = 0.0;
+        for _ in 0..iter {
+            sum += self.get() as f64;
+        }
+        return sum / (iter as f64);
+    }
 }
 
 // Names for file naming.
 const NAME_UNIFORM: &'static str = "uniform";
 const NAME_GEOMETRIC: &'static str = "geometric";
 const NAME_HARMONIC: &'static str = "harmonic";
-const NAME_TWOHARMONIC: &'static str = "twoharmonic";
+const NAME_DIHARMONIC: &'static str = "diharmonic";
 
 
 // HELPER FUNCTIONS
@@ -115,15 +122,15 @@ fn calculate_harmonic_cdf (n: usize) -> Vec<f64> {
 }
 
 
-pub struct TwoHarmonic {
+pub struct Diharmonic {
     limit: u8,
     hs: Vec<f64>,
 }
-impl Distribution for TwoHarmonic {
+impl Distribution for Diharmonic {
     fn new(limit: u8) -> Self {
         let limit_sanitised = sanitise_bounds(limit);
         let hs = calculate_generalized_harmonic_cdf(limit as usize, 2.0);
-        return TwoHarmonic { limit: limit_sanitised, hs: hs };
+        return Diharmonic { limit: limit_sanitised, hs: hs };
     }
     fn get(&self) -> u8 {
         let x: f64 = rand::thread_rng().gen();
@@ -134,7 +141,7 @@ impl Distribution for TwoHarmonic {
         return idx as u8 + 1;
     }
     fn name(&self) -> &'static str {
-        NAME_TWOHARMONIC
+        NAME_DIHARMONIC
     }
 }
 
@@ -149,3 +156,4 @@ fn calculate_generalized_harmonic_cdf (n: usize, e: f64) -> Vec<f64> {
     }
     return hs;
 }
+

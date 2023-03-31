@@ -37,9 +37,9 @@ fn run_experiments (ns: &[usize], iter: usize, limit: u8) {
     let ds_uniform = distribution::Uniform::new(limit);
     let ds_geometric = distribution::Geometric::new(limit);
     let ds_harmonic = distribution::Harmonic::new(limit);
-    let ds_two_harmonic = distribution::TwoHarmonic::new(limit);
+    let ds_diharmonic = distribution::Diharmonic::new(limit);
     let update_lists: [&mut dyn UpdateList; 4] = [&mut ul_classic, &mut ul_move_to_front, &mut ul_transpose, &mut ul_count];
-    let distributions: [&dyn Distribution; 4] = [&ds_uniform, &ds_geometric, &ds_harmonic, &ds_two_harmonic];
+    let distributions: [&dyn Distribution; 4] = [&ds_uniform, &ds_geometric, &ds_harmonic, &ds_diharmonic];
     let mut cost: f64;
 
     // Write set of ns to file, for future data analysis.
@@ -77,27 +77,19 @@ fn run_experiments (ns: &[usize], iter: usize, limit: u8) {
 }
 
 
-fn expected_value (ds: &dyn distribution::Distribution, iter: usize) -> f64 {
-    let mut sum: f64 = 0.0;
-    for _ in 0..iter {
-        sum += ds.get() as f64;
-    }
-    return sum / (iter as f64);
-}
-
 fn run_ev (iter: usize, limit: u8) {
     let ds_uniform = distribution::Uniform::new(limit);
     let ds_geometric = distribution::Geometric::new(limit);
     let ds_harmonic = distribution::Harmonic::new(limit);
-    let ds_two_harmonic = distribution::TwoHarmonic::new(limit);
-    let ev_uniform = expected_value(&ds_uniform, iter);
-    let ev_geometric = expected_value(&ds_geometric, iter);
-    let ev_harmonic = expected_value(&ds_harmonic, iter);
-    let ev_twoharmonic = expected_value(&ds_two_harmonic, iter);
+    let ds_diharmonic = distribution::Diharmonic::new(limit);
+    let ev_uniform = ds_uniform.ev(iter);
+    let ev_geometric = ds_geometric.ev(iter);
+    let ev_harmonic = ds_harmonic.ev(iter);
+    let ev_diharmonic = ds_diharmonic.ev(iter);
     println!("uni: {}", ev_uniform);
     println!("geo: {}", ev_geometric);
     println!("harm: {}", ev_harmonic);
-    println!("2harm: {}", ev_twoharmonic);
+    println!("2harm: {}", ev_diharmonic);
 }
 
 
