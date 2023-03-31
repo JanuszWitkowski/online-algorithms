@@ -57,7 +57,7 @@ impl Register {
     }
     fn insert(&mut self, elem: usize, position: usize) {
         if self.cache.len() < self.max_len {
-            self.cache.insert(elem, position);
+            self.cache.insert(position, elem);
         }
     }
     fn push(&mut self, elem: usize) {
@@ -153,8 +153,6 @@ impl Cache for RAND {
             true => COST_ACCESS,
             false => {
                 if self.reg.is_full() {
-                    // let index = rand::thread_rng().gen_range(1..=self.reg.max_len());
-                    // self.reg.remove(index);
                     self.reg.remove(rand::thread_rng().gen_range(0..self.reg.max_len()));
                 }
                 self.reg.push(elem);
@@ -260,13 +258,125 @@ impl Cache for RMA {
                         self.total_unmarked = self.reg.max_len();
                     }
                     let mut random_unmarked = rand::thread_rng().gen_range(0..self.total_unmarked);
-                    // for i in 0..self.reg.len() {
-                    //     if self.
-                    // }
-                    self.reg.replace(elem, 0);  // TODO: DOKONCZYC I POPRAWIC!!!
+                    for i in 0..self.reg.len() {
+                        if !self.mark[i] {
+                            if random_unmarked == 0 {
+                                self.reg.replace(elem, i);
+                                self.mark[i] = true;
+                                self.total_unmarked -= 1;
+                                break;
+                            }
+                            random_unmarked -= 1;
+                        }
+                    }
                 }
                 COST_FAULT
             },
         }
+    }
+}
+
+
+
+#[cfg(test)]
+mod tests {
+    use crate::cache::Register;
+
+    #[test]
+    fn test_register_basics() {
+        let max_length: usize = 5;
+        let mut reg = Register::new(max_length);
+        assert!(reg.is_empty());
+        assert!(!reg.is_full());
+        assert_eq!(reg.max_len(), max_length);
+
+        let middle_length: usize = 3;
+        for elem in 1..=middle_length {
+            reg.push(elem);
+        }
+        assert!(!reg.is_empty());
+        assert!(!reg.is_full());
+        assert_eq!(reg.len(), middle_length);
+
+        for elem in (middle_length + 1)..=max_length {
+            reg.push(elem);
+        }
+        assert!(!reg.is_empty());
+        assert!(reg.is_full());
+
+        reg.remove(0);
+        assert!(!reg.is_empty());
+        assert!(!reg.is_full());
+        assert_eq!(reg.len(), max_length - 1);
+
+        let special_elem: usize = 69;
+        reg.insert(special_elem, 0);
+        assert!(!reg.is_empty());
+        assert!(reg.is_full());
+        assert!(reg.contains(special_elem));
+        assert_eq!(reg.index_of(special_elem), Some(0));
+
+        reg.remove(0);
+        assert!(!reg.is_empty());
+        assert!(!reg.is_full());
+        assert!(!reg.contains(special_elem));
+
+        reg.clear();
+        assert!(reg.is_empty());
+        assert!(!reg.is_full());
+    }
+
+    #[test]
+    fn test_register_adding_over_limit() {
+        let max_length: usize = 5;
+        let mut reg = Register::new(max_length);
+        for elem in 1..=max_length {
+            reg.push(elem);
+        }
+        assert!(reg.is_full());
+
+        let elem_over_limit = max_length + 1;
+        reg.push(elem_over_limit);
+        assert!(reg.is_full());
+        assert!(!reg.contains(elem_over_limit));
+
+        reg.insert(elem_over_limit, 0);
+        assert!(reg.is_full());
+        assert!(!reg.contains(elem_over_limit));
+
+        reg.clear();
+        reg.push(elem_over_limit);
+        assert!(reg.contains(elem_over_limit));
+    }
+
+    #[test]
+    fn test_register_removing_out_of_bounds() {
+        let max_length: usize = 5;
+        let mut reg = Register::new(max_length);
+        assert!(reg.is_empty());
+        reg.remove(0);
+        assert!(reg.is_empty());
+        assert_eq!(reg.max_len(), max_length);
+        reg.remove(1);
+        assert!(reg.is_empty());
+        assert_eq!(reg.max_len(), max_length);
+
+        reg.push(1);
+        assert!(!reg.is_empty());
+        reg.remove(1);
+        assert!(!reg.is_empty());
+
+        reg.clear();
+        for elem in 0..max_length {
+            reg.push(elem);
+        }
+        reg.remove(0);
+        assert!(!reg.is_empty());
+        assert!(!reg.is_full());
+        let current_length = reg.len();
+        reg.remove(max_length);
+        assert_eq!(reg.len(), current_length);
+        reg.remove(current_length);
+        assert_eq!(reg.len(), current_length);
     }
 }
