@@ -280,7 +280,9 @@ impl Cache for RMA {
 
 #[cfg(test)]
 mod tests {
-    use crate::cache::Register;
+    use crate::cache::{Register, Cache, FIFO};
+    use crate::cache::{NAME_FIFO};
+    use crate::cache::{COST_ACCESS, COST_FAULT};
 
     #[test]
     fn test_register_basics() {
@@ -378,5 +380,79 @@ mod tests {
         assert_eq!(reg.len(), current_length);
         reg.remove(current_length);
         assert_eq!(reg.len(), current_length);
+    }
+
+    #[test]
+    fn test_register_fn_len() {
+        let max_length: usize = 5;
+        let mut reg = Register::new(max_length);
+        assert_eq!(reg.len(), 0);
+        for i in 1..=max_length {
+            reg.push(i);
+            assert_eq!(reg.len(), i);
+        }
+        assert_eq!(reg.len(), max_length);
+    }
+
+    #[test]
+    fn test_fifo_new() {
+        let max_length: usize = 5;
+        let mut fifo = FIFO::new(max_length);
+        assert_eq!(fifo.name(), NAME_FIFO);
+    }
+
+    #[test]
+    fn test_fifo_access_adding() {
+        let max_length: usize = 5;
+        let mut fifo = FIFO::new(max_length);
+        let mut total: usize = 0;
+        let mut cost: usize;
+        for i in 1..=max_length {
+            cost = fifo.access(i);
+            assert_eq!(cost, COST_FAULT);
+            total += cost;
+        }
+        assert_eq!(total, max_length);
+    }
+
+    #[test]
+    fn test_fifo_access_existing_elems() {
+        let max_length: usize = 5;
+        let mut fifo = FIFO::new(max_length);
+        for i in 1..=max_length {
+            fifo.access(i);
+        }
+        let mut cost: usize;
+        for i in 1..=max_length {
+            cost = fifo.access(i);
+            assert_eq!(cost, COST_ACCESS);
+        }
+    }
+
+    #[test]
+    fn test_fifo_access_fault() {
+        let max_length: usize = 5;
+        let mut fifo = FIFO::new(max_length);
+        for i in 1..=max_length {
+            fifo.access(i);
+        }
+        // 1 2 3 4 5
+        let new_elem = max_length + 1;  // 6
+        let mut cost: usize = fifo.access(new_elem);
+        // 2 3 4 5 6
+        assert_eq!(cost, COST_FAULT);
+        for i in 2..new_elem {
+            cost = fifo.access(i);
+            assert_eq!(cost, COST_ACCESS);
+        }
+        cost = fifo.access(1);
+        // 3 4 5 6 1
+        assert_eq!(cost, COST_FAULT);
+        cost = fifo.access(1);
+        assert_eq!(cost, COST_ACCESS);
+        for i in 3..new_elem {
+            cost = fifo.access(i);
+            assert_eq!(cost, COST_ACCESS);
+        }
     }
 }
