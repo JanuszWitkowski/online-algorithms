@@ -14,6 +14,7 @@ const NAME_RMA:     &'static str = "Random-Markup-Algorithm";
 pub trait Cache {
     fn access(&mut self, elem: usize) -> usize;
     fn name(&self) -> &'static str;
+    fn print(&self);
 }
 
 
@@ -78,7 +79,17 @@ impl Register {
     fn clear(&mut self) {
         self.cache.clear();
     }
+    fn print(&self) {
+        print!("[");
+        for elem in &self.cache {
+            print!(" {}", elem);
+        }
+        println!(" ]");
+    }
 }
+
+
+// Private struct for priority-queue-type cache
 
 
 // First In First Out
@@ -93,6 +104,9 @@ impl FIFO {
 impl Cache for FIFO {
     fn name(&self) -> &'static str {
         NAME_FIFO
+    }
+    fn print(&self) {
+        self.reg.print();
     }
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.contains(elem) {
@@ -121,6 +135,9 @@ impl Cache for FWF {
     fn name(&self) -> &'static str {
         NAME_FWF
     }
+    fn print(&self) {
+        self.reg.print();
+    }
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.contains(elem) {
             true => COST_ACCESS,
@@ -148,6 +165,9 @@ impl Cache for RAND {
     fn name(&self) -> &'static str {
         NAME_RAND
     }
+    fn print(&self) {
+        self.reg.print();
+    }
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.contains(elem) {
             true => COST_ACCESS,
@@ -162,33 +182,42 @@ impl Cache for RAND {
     }
 }
 
-// TODO: Maybe use some kind of structure for this?
 // Least Recently Used
-// pub struct LRU {
-//     reg: Register,
-// }
-// impl LRU {
-//     pub fn new(max_length: usize) -> Self {
-//         LRU { reg: Register::new(max_length) }
-//     }
-// }
-// impl Cache for LRU {
-//     fn name(&self) -> &'static str {
-//         NAME_LRU
-//     }
-//     fn access(&mut self, elem: usize) -> usize {    // TODO: Implement LRU properly
-//         match self.reg.contains(elem) {
-//             true => COST_ACCESS,
-//             false => {
-//                 if self.reg.is_full() {
-//                     self.reg.remove(0);
-//                 }
-//                 self.reg.push(elem);
-//                 COST_FAULT
-//             },
-//         }
-//     }
-// }
+pub struct LRU {
+    reg: Register,
+}
+impl LRU {
+    pub fn new(max_length: usize) -> Self {
+        LRU { reg: Register::new(max_length) }
+    }
+}
+impl Cache for LRU {
+    fn name(&self) -> &'static str {
+        NAME_LRU
+    }
+    fn print(&self) {
+        self.reg.print();
+    }
+    fn access(&mut self, elem: usize) -> usize {
+        match self.reg.index_of(elem) {
+            Some(index) => {
+                // Move the element to the front - it was recently used
+                self.reg.remove(index);
+                self.reg.insert(elem, 0);
+                COST_ACCESS
+            },
+            None => {
+                // Remove the last element, as it is the least recently used one
+                if self.reg.is_full() {
+                    self.reg.remove(self.reg.max_len() - 1);
+                }
+                // Move the new element to the front
+                self.reg.insert(elem, 0);
+                COST_FAULT
+            },
+        }
+    }
+}
 
 // TODO: Maybe use some kind of Heap for this?
 // Least Frequently Used
@@ -238,6 +267,9 @@ impl Cache for RMA {
     fn name(&self) -> &'static str {
         NAME_RMA
     }
+    fn print(&self) {
+        self.reg.print();
+    }
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.index_of(elem) {
             Some(index) => {
@@ -278,10 +310,11 @@ impl Cache for RMA {
 
 
 
+
 #[cfg(test)]
 mod tests {
-    use crate::cache::{Register, Cache, FIFO};
-    use crate::cache::{NAME_FIFO};
+    use crate::cache::{Register, Cache, FIFO, LRU};
+    use crate::cache::{NAME_FIFO, NAME_LRU};
     use crate::cache::{COST_ACCESS, COST_FAULT};
 
     #[test]
@@ -394,10 +427,11 @@ mod tests {
         assert_eq!(reg.len(), max_length);
     }
 
+    // FIFO TESTS
     #[test]
     fn test_fifo_new() {
         let max_length: usize = 5;
-        let mut fifo = FIFO::new(max_length);
+        let fifo = FIFO::new(max_length);
         assert_eq!(fifo.name(), NAME_FIFO);
     }
 
@@ -454,5 +488,74 @@ mod tests {
             cost = fifo.access(i);
             assert_eq!(cost, COST_ACCESS);
         }
+    }
+
+    // LRU TESTS
+    #[test]
+    fn test_lru_new() {
+        let max_length = 5;
+        let lru = LRU::new(max_length);
+        assert_eq!(lru.name(), NAME_LRU);
+    }
+
+    #[test]
+    fn test_lru_access_adding() {
+        let max_length: usize = 5;
+        let mut lru = LRU::new(max_length);
+        let mut total: usize = 0;
+        let mut cost: usize;
+        for i in 1..=max_length {
+            cost = lru.access(i);
+            assert_eq!(cost, COST_FAULT);
+            total += cost;
+        }
+        assert_eq!(total, max_length);
+    }
+
+    #[test]
+    fn test_lru_access_existing_elems() {
+        let max_length: usize = 5;
+        let mut lru = LRU::new(max_length);
+        for i in 1..=max_length {
+            lru.access(i);
+        }
+        let mut cost: usize;
+        for i in 1..=max_length {
+            cost = lru.access(i);
+            assert_eq!(cost, COST_ACCESS);
+        }
+    }
+
+    #[test]
+    fn test_lru_access_fault() {
+        let max_length: usize = 5;
+        let mut lru = LRU::new(max_length);
+        for i in 1..=max_length {
+            lru.access(i);
+        }
+        // 5 4 3 2 1
+        lru.print();
+        let new_elem = max_length + 1;  // 6
+        println!("{}", new_elem);
+        let mut cost: usize = lru.access(new_elem);
+        // 6 5 4 3 2
+        lru.print();
+        assert_eq!(cost, COST_FAULT);
+        for i in (2..new_elem).rev() {
+            cost = lru.access(i);
+            assert_eq!(cost, COST_ACCESS);
+        }
+        // 2 3 4 5 6
+        lru.print();
+        cost = lru.access(1);
+        // 1 2 3 4 5
+        lru.print();
+        assert_eq!(cost, COST_FAULT);
+        cost = lru.access(1);
+        assert_eq!(cost, COST_ACCESS);
+        // for i in 3..max_length {
+        //     cost = fifo.access(i);
+        //     assert_eq!(cost, COST_ACCESS);
+        // }
     }
 }
