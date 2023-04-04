@@ -89,7 +89,96 @@ impl Register {
 }
 
 
+// BinHeap helpers
+
 // Private struct for priority-queue-type cache
+struct BinHeap {
+    heap:   Vec<(usize, usize)>,
+    max_len: usize
+}
+impl BinHeap {
+    fn new(max_length: usize) -> Self {
+        BinHeap { 
+            heap: Vec::new(),
+            max_len: max_length
+        }
+    }
+    fn parent(&self, i: usize) -> usize {
+        (i - 1) / 2
+    }
+    fn left(&self, i: usize) -> usize {
+        2 * i + 1
+    }
+    fn right(&self, i: usize) -> usize {
+        2 * (i + 1)
+    }
+    fn swap(&mut self, i1: usize, i2: usize) {
+        let tmp = self.heap[i1];
+        self.heap[i1] = self.heap[i2];
+        self.heap[i2] = tmp;
+    }
+    // lil' bit ugly, should find a functional alternative...
+    fn largest_index(&self, i1: usize, i2: usize, i3: usize) -> usize {
+        if self.heap[i1].0 < self.heap[i2].0 {
+            if self.heap[i2].0 < self.heap[i3].0 {
+                return i3;
+            } return i2;
+        } if self.heap[i1].0 < self.heap[i3].0 {
+            return i3;
+        } return i1;
+    }
+    fn heapify(&mut self, i: usize) {
+        let largest_index = self.largest_index(i, self.left(i), self.right(i));
+        if largest_index != i {
+            self.swap(i, largest_index);
+            self.heapify(largest_index);
+        }
+    }
+    fn is_full(&self) -> bool {
+        self.heap.len() == self.max_len
+    }
+    fn is_empty(&self) -> bool {
+        self.heap.len() == 0
+    }
+    fn len(&self) -> usize {
+        self.heap.len()
+    }
+    fn max_len(&self) -> usize {
+        self.max_len
+    }
+    // fn contains(&self, elem: usize) -> bool {
+    //     if self.heap.contains(&elem) {
+    //         return true;
+    //     }
+    //     false
+    // }
+    // fn find_elem_and_get_index(&self, elem: usize, idx: usize) -> Option<usize> {
+    //     if self.heap[idx].1 == elem {
+    //         return Some(idx);
+    //     }
+    //     //
+    // }
+    fn index_of(&self, value: usize) -> Option<usize> {
+        for index in 0..self.heap.len() {
+            if self.heap[index].1 == value {
+                return Some(index);
+            }
+        }
+        None
+        // find_elem_and_get_index(elem, 0);
+    }
+    fn push(&mut self, elem: (usize, usize)) {
+        if self.heap.len() < self.max_len {
+            self.heap.insert(0, elem);
+            self.heapify(0);
+        }
+    }
+    fn delete_last(&mut self) {
+        if self.heap.len() > 0 {
+            self.heap.remove(self.heap.len() - 1);
+        }
+    }
+}
 
 
 // First In First Out
