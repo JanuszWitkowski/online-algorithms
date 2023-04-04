@@ -92,6 +92,7 @@ impl Register {
 // BinHeap helpers
 
 // Private struct for priority-queue-type cache
+// WARNING: just realized this might not be a good idea cause heap operations might not behave properly on limited heap...
 struct BinHeap {
     heap:   Vec<(usize, usize)>,
     max_len: usize
@@ -104,13 +105,22 @@ impl BinHeap {
         }
     }
     fn parent(&self, i: usize) -> usize {
-        (i - 1) / 2
+        match i > 0 {
+            true => (i - 1) / 2,
+            false => 0,
+        }
     }
     fn left(&self, i: usize) -> usize {
-        2 * i + 1
+        match 2 * i + 1 < self.max_len {
+            true => 2 * i + 1,
+            false => self.max_len - 1,
+        }
     }
     fn right(&self, i: usize) -> usize {
-        2 * (i + 1)
+        match 2 * (i + 1) < self.max_len {
+            true => 2 * (i + 1),
+            false => self.max_len - 1,
+        }
     }
     fn swap(&mut self, i1: usize, i2: usize) {
         let tmp = self.heap[i1];
@@ -133,6 +143,10 @@ impl BinHeap {
             self.swap(i, largest_index);
             self.heapify(largest_index);
         }
+    }
+    fn inc_key(&mut self, i: usize) {
+        self.heap[i] = (self.heap[i].0 + 1, self.heap[i].1);
+        self.heapify(i);
     }
     fn is_full(&self) -> bool {
         self.heap.len() == self.max_len
@@ -177,6 +191,13 @@ impl BinHeap {
         if self.heap.len() > 0 {
             self.heap.remove(self.heap.len() - 1);
         }
+    }
+    fn print(&self) {
+        print!("[ ");
+        for elem in &self.heap {
+            print!(" {}({})", elem.1, elem.0);
+        }
+        println!(" ]");
     }
 }
 
@@ -310,32 +331,48 @@ impl Cache for LRU {
 
 // TODO: Maybe use some kind of Heap for this?
 // Least Frequently Used
-// pub struct LFU {
-//     reg: Register,
-//     usage: 
-// }
-// impl LFU {
-//     pub fn new(max_length: usize) -> Self {
-//         LFU { reg: Register::new(max_length) }
-//     }
-// }
-// impl Cache for LFU {
-//     fn name(&self) -> &'static str {
-//         NAME_LFU
-//     }
-//     fn access(&mut self, elem: usize) -> usize {
-//         match self.reg.contains(elem) {
-//             true => COST_ACCESS,
-//             false => {
-//                 if self.reg.is_full() {
-//                     self.reg.remove(0);
-//                 }
-//                 self.reg.push(elem);
-//                 COST_FAULT
-//             },
-//         }
-//     }
-// }
+pub struct LFU {
+    reg: BinHeap,
+    usage: Vec<(usize, usize)>
+}
+impl LFU {
+    pub fn new(max_length: usize, n: usize) -> Self {
+        let mut lfu = LFU { 
+            reg: BinHeap::new(max_length),
+            usage: Vec::new()
+        };
+        for i in 0..n {
+            lfu.usage.push((0, i+1));
+        }
+        lfu
+    }
+    fn get_elem_with_value(&self, value: usize) -> (usize, usize) {
+        self.usage[value]
+    }
+}
+impl Cache for LFU {
+    fn name(&self) -> &'static str {
+        NAME_LFU
+    }
+    fn print(&self) {
+        self.reg.print();
+    }
+    fn access(&mut self, value: usize) -> usize {
+        match self.reg.index_of(value) {
+            Some(index) => {
+                self.reg.inc_key(index);        // TODO: CO Z ZEREM I PARENTEM??
+                COST_ACCESS
+            },
+            None => {
+                if self.reg.is_full() {
+                    self.reg.delete_last();
+                }
+                // self.reg.push(value);
+                COST_FAULT
+            },
+        }
+    }
+}
 
 // Random Markup Algorithm
 pub struct RMA {
@@ -646,5 +683,14 @@ mod tests {
         //     cost = fifo.access(i);
         //     assert_eq!(cost, COST_ACCESS);
         // }
+    }
+
+    // MISC
+    #[test]
+    fn test_div_negative() {
+        let zero: usize = 0;
+        let result: usize = (zero - 1) / 2;
+        println!("(0 - 1)/2 = {}", result);
+        assert!(false);
     }
 }
