@@ -23,6 +23,7 @@ struct Register {
     cache: Vec<usize>,
     max_len: usize,
 }
+
 impl Register {
     fn new(max_length: usize) -> Self {
         Register{
@@ -30,24 +31,30 @@ impl Register {
             max_len: max_length
         }
     }
+
     fn is_full(&self) -> bool {
         self.cache.len() == self.max_len
     }
+
     fn is_empty(&self) -> bool {
         self.cache.len() == 0
     }
+
     fn len(&self) -> usize {
         self.cache.len()
     }
+
     fn max_len(&self) -> usize {
         self.max_len
     }
+
     fn contains(&self, elem: usize) -> bool {
         if self.cache.contains(&elem) {
             return true;
         }
         false
     }
+
     fn index_of(&self, elem: usize) -> Option<usize> {
         for index in 0..self.cache.len() {
             if self.cache[index] == elem {
@@ -56,29 +63,35 @@ impl Register {
         }
         None
     }
+
     fn insert(&mut self, elem: usize, position: usize) {
         if self.cache.len() < self.max_len {
             self.cache.insert(position, elem);
         }
     }
+
     fn push(&mut self, elem: usize) {
         if self.cache.len() < self.max_len {
             self.cache.push(elem);
         }
     }
+
     fn replace(&mut self, elem:usize, position: usize) {
         if position < self.cache.len() {
             self.cache[position] = elem;
         }
     }
+    
     fn remove(&mut self, position: usize) {
         if position < self.cache.len() {
             self.cache.remove(position);
         }
     }
+
     fn clear(&mut self) {
         self.cache.clear();
     }
+
     fn print(&self) {
         print!("[");
         for elem in &self.cache {
@@ -89,14 +102,13 @@ impl Register {
 }
 
 
-// BinHeap helpers
 
 // Private struct for priority-queue-type cache
-// WARNING: just realized this might not be a good idea cause heap operations might not behave properly on limited heap...
 struct BinHeap {
     heap:   Vec<(usize, usize)>,
     max_len: usize
 }
+
 impl BinHeap {
     fn new(max_length: usize) -> Self {
         BinHeap { 
@@ -104,41 +116,36 @@ impl BinHeap {
             max_len: max_length
         }
     }
+
     fn parent(&self, i: usize) -> Option<usize> {
         match i > 0 {
             true => Some((i - 1) / 2),
             false => None,
         }
     }
+
     fn left(&self, i: usize) -> Option<usize> {
         match 2 * i + 1 < self.max_len {
             true => Some(2 * i + 1),
             false => None,
         }
     }
+
     fn right(&self, i: usize) -> Option<usize> {
         match 2 * (i + 1) < self.max_len {
             true => Some(2 * (i + 1)),
             false => None,
         }
     }
+
     fn swap(&mut self, i1: usize, i2: usize) {
         let tmp = self.heap[i1];
         self.heap[i1] = self.heap[i2];
         self.heap[i2] = tmp;
     }
+
     // lil' bit ugly, should find a functional alternative...
     fn smallest_index(&self, i: usize, indexes: [Option<usize>; 2]) -> usize {
-        // match i2 {
-        //     Some(idx2)
-        // }
-        // if self.heap[i1].0 > self.heap[i2].0 {
-        //     if self.heap[i2].0 > self.heap[i3].0 {
-        //         return i3;
-        //     } return i2;
-        // } if self.heap[i1].0 > self.heap[i3].0 {
-        //     return i3;
-        // } return i1;
         let mut extreme_idx = i;
         for mi in indexes {
             extreme_idx = match mi {
@@ -154,6 +161,7 @@ impl BinHeap {
         }
         extreme_idx
     }
+
     fn heapify(&mut self, i: usize) {
         let smallest_index = self.smallest_index(i, [self.left(i), self.right(i)]);
         if smallest_index != i {
@@ -161,34 +169,28 @@ impl BinHeap {
             self.heapify(smallest_index);
         }
     }
+
     fn inc_key(&mut self, i: usize) {
         self.heap[i] = (self.heap[i].0 + 1, self.heap[i].1);
         self.heapify(i);
     }
+
     fn is_full(&self) -> bool {
         self.heap.len() == self.max_len
     }
+
     fn is_empty(&self) -> bool {
         self.heap.len() == 0
     }
+
     fn len(&self) -> usize {
         self.heap.len()
     }
+
     fn max_len(&self) -> usize {
         self.max_len
     }
-    // fn contains(&self, elem: usize) -> bool {
-    //     if self.heap.contains(&elem) {
-    //         return true;
-    //     }
-    //     false
-    // }
-    // fn find_elem_and_get_index(&self, elem: usize, idx: usize) -> Option<usize> {
-    //     if self.heap[idx].1 == elem {
-    //         return Some(idx);
-    //     }
-    //     //
-    // }
+
     fn index_of(&self, value: usize) -> Option<usize> {
         for index in (0..self.heap.len()).rev() {
             if self.heap[index].1 == value {
@@ -196,29 +198,33 @@ impl BinHeap {
             }
         }
         None
-        // find_elem_and_get_index(elem, 0);
     }
+
     fn push(&mut self, elem: (usize, usize)) {
         if self.heap.len() < self.max_len {
             self.heap.insert(0, elem);
             self.heapify(0);
         }
     }
+
     fn delete_smallest(&mut self) {
         if self.heap.len() > 0 {
             self.heap.remove(0);
         }
     }
+
     fn pop(&mut self) -> (usize, usize) {
         let (key, value) = self.heap[0];
         self.heap.remove(0);
         (key, value)
     }
+
     fn pop_key(&mut self) -> usize {
         let key = self.heap[0].0;
         self.heap.remove(0);
         key
     }
+
     fn print(&self) {
         print!("[ ");
         for elem in &self.heap {
@@ -229,22 +235,27 @@ impl BinHeap {
 }
 
 
+
 // First In First Out
 pub struct FIFO {
     reg: Register,
 }
+
 impl FIFO {
     pub fn new(max_length: usize) -> Self {
         FIFO { reg: Register::new(max_length) }
     }
 }
+
 impl Cache for FIFO {
     fn name(&self) -> &'static str {
         NAME_FIFO
     }
+
     fn print(&self) {
         self.reg.print();
     }
+
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.contains(elem) {
             true => COST_ACCESS,
@@ -259,22 +270,27 @@ impl Cache for FIFO {
     }
 }
 
+
 // Flush When Full
 pub struct FWF {
     reg: Register,
 }
+
 impl FWF {
     pub fn new(max_length: usize) -> Self {
         FWF { reg: Register::new(max_length) }
     }
 }
+
 impl Cache for FWF {
     fn name(&self) -> &'static str {
         NAME_FWF
     }
+
     fn print(&self) {
         self.reg.print();
     }
+
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.contains(elem) {
             true => COST_ACCESS,
@@ -289,22 +305,27 @@ impl Cache for FWF {
     }
 }
 
+
 // Random
 pub struct RAND {
     reg: Register,
 }
+
 impl RAND {
     pub fn new(max_length: usize) -> Self {
         RAND { reg: Register::new(max_length) }
     }
 }
+
 impl Cache for RAND {
     fn name(&self) -> &'static str {
         NAME_RAND
     }
+
     fn print(&self) {
         self.reg.print();
     }
+
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.contains(elem) {
             true => COST_ACCESS,
@@ -319,22 +340,27 @@ impl Cache for RAND {
     }
 }
 
+
 // Least Recently Used
 pub struct LRU {
     reg: Register,
 }
+
 impl LRU {
     pub fn new(max_length: usize) -> Self {
         LRU { reg: Register::new(max_length) }
     }
 }
+
 impl Cache for LRU {
     fn name(&self) -> &'static str {
         NAME_LRU
     }
+
     fn print(&self) {
         self.reg.print();
     }
+
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.index_of(elem) {
             Some(index) => {
@@ -356,20 +382,17 @@ impl Cache for LRU {
     }
 }
 
-// TODO: Maybe use some kind of Heap for this?
+
 // Least Frequently Used
 pub struct LFU {
     reg: BinHeap,
-    // reg: Register,
-    // freq: Vec<usize>,
     usage: Vec<(usize, usize)>
 }
+
 impl LFU {
     pub fn new(max_length: usize, n: usize) -> Self {
         let mut lfu = LFU { 
             reg: BinHeap::new(max_length),
-            // reg: Register::new(max_length),
-            // freq: Vec::new(),
             usage: Vec::new()
         };
         for i in 1..=n {
@@ -377,20 +400,26 @@ impl LFU {
         }
         lfu
     }
+
     fn get_elem_with_value(&self, value: usize) -> (usize, usize) {
         self.usage[value - 1]
     }
+
     fn update_key_for_value(&mut self, key: usize, value: usize) {
         self.usage[value - 1] = (key, value);
     }
+
 }
+
 impl Cache for LFU {
     fn name(&self) -> &'static str {
         NAME_LFU
     }
+
     fn print(&self) {
         self.reg.print();
     }
+
     fn access(&mut self, value: usize) -> usize {
         match self.reg.index_of(value) {
             Some(index) => {
@@ -406,33 +435,9 @@ impl Cache for LFU {
                 COST_FAULT
             },
         }
-        // match self.reg.index_of(value) {
-        //     Some(index) => {
-        //         let freq = self.freq[index] + 1;
-        //         let mut new_index = index;
-        //         self.reg.remove(index);
-        //         self.freq.remove(index);
-        //         while new_index > 0 && self.freq[new_index - 1] < freq {
-        //             new_index -= 1
-        //         }
-        //         self.reg.insert(new_index, value);
-        //         self.freq.insert(new_index, freq);
-        //         COST_ACCESS
-        //     },
-        //     None => {
-        //         if self.reg.is_full() {
-        //             //
-        //         }
-        //         let mut elem_index = 0;
-        //         while elem_index < self.usage.len() && self.usage[elem_index].1 != value {
-        //             elem_index += 1;
-        //         }
-        //         // self.reg.
-        //         COST_FAULT
-        //     }
-        // }
     }
 }
+
 
 // Random Markup Algorithm
 pub struct RMA {
@@ -440,6 +445,7 @@ pub struct RMA {
     mark: Vec<bool>,
     total_unmarked: usize,
 }
+
 impl RMA {
     pub fn new(max_length: usize) -> Self {
         RMA { 
@@ -449,13 +455,16 @@ impl RMA {
         }
     }
 }
+
 impl Cache for RMA {
     fn name(&self) -> &'static str {
         NAME_RMA
     }
+
     fn print(&self) {
         self.reg.print();
     }
+    
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.index_of(elem) {
             Some(index) => {
@@ -613,6 +622,10 @@ mod tests {
         assert_eq!(reg.len(), max_length);
     }
 
+    // HEAP TESTS
+    // #[test]
+    // fn test_heap_
+
     // FIFO TESTS
     #[test]
     fn test_fifo_new() {
@@ -746,11 +759,11 @@ mod tests {
     }
 
     // MISC
-    #[test]
-    fn test_div_negative() {
-        let zero: usize = 0;
-        let result: usize = (zero - 1) / 2;
-        println!("(0 - 1)/2 = {}", result);
-        assert!(false);
-    }
+    // #[test]
+    // fn test_div_negative() {
+    //     let zero: usize = 0;
+    //     let result: usize = (zero - 1) / 2;
+    //     println!("(0 - 1)/2 = {}", result);
+    //     assert!(false);
+    // }
 }
