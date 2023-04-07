@@ -104,22 +104,22 @@ impl BinHeap {
             max_len: max_length
         }
     }
-    fn parent(&self, i: usize) -> usize {
+    fn parent(&self, i: usize) -> Option<usize> {
         match i > 0 {
-            true => (i - 1) / 2,
-            false => 0,
+            true => Some((i - 1) / 2),
+            false => None,
         }
     }
-    fn left(&self, i: usize) -> usize {
+    fn left(&self, i: usize) -> Option<usize> {
         match 2 * i + 1 < self.max_len {
-            true => 2 * i + 1,
-            false => self.max_len - 1,
+            true => Some(2 * i + 1),
+            false => None,
         }
     }
-    fn right(&self, i: usize) -> usize {
+    fn right(&self, i: usize) -> Option<usize> {
         match 2 * (i + 1) < self.max_len {
-            true => 2 * (i + 1),
-            false => self.max_len - 1,
+            true => Some(2 * (i + 1)),
+            false => None,
         }
     }
     fn swap(&mut self, i1: usize, i2: usize) {
@@ -128,20 +128,37 @@ impl BinHeap {
         self.heap[i2] = tmp;
     }
     // lil' bit ugly, should find a functional alternative...
-    fn largest_index(&self, i1: usize, i2: usize, i3: usize) -> usize {
-        if self.heap[i1].0 < self.heap[i2].0 {
-            if self.heap[i2].0 < self.heap[i3].0 {
-                return i3;
-            } return i2;
-        } if self.heap[i1].0 < self.heap[i3].0 {
-            return i3;
-        } return i1;
+    fn smallest_index(&self, i: usize, indexes: [Option<usize>; 2]) -> usize {
+        // match i2 {
+        //     Some(idx2)
+        // }
+        // if self.heap[i1].0 > self.heap[i2].0 {
+        //     if self.heap[i2].0 > self.heap[i3].0 {
+        //         return i3;
+        //     } return i2;
+        // } if self.heap[i1].0 > self.heap[i3].0 {
+        //     return i3;
+        // } return i1;
+        let mut extreme_idx = i;
+        for mi in indexes {
+            extreme_idx = match mi {
+                Some(idx) => {
+                    if self.heap[extreme_idx].0 < self.heap[idx].0 {
+                        extreme_idx
+                    } else {
+                        idx
+                    }
+                },
+                None => extreme_idx
+            }
+        }
+        extreme_idx
     }
     fn heapify(&mut self, i: usize) {
-        let largest_index = self.largest_index(i, self.left(i), self.right(i));
-        if largest_index != i {
-            self.swap(i, largest_index);
-            self.heapify(largest_index);
+        let smallest_index = self.smallest_index(i, [self.left(i), self.right(i)]);
+        if smallest_index != i {
+            self.swap(i, smallest_index);
+            self.heapify(smallest_index);
         }
     }
     fn inc_key(&mut self, i: usize) {
@@ -173,7 +190,7 @@ impl BinHeap {
     //     //
     // }
     fn index_of(&self, value: usize) -> Option<usize> {
-        for index in 0..self.heap.len() {
+        for index in (0..self.heap.len()).rev() {
             if self.heap[index].1 == value {
                 return Some(index);
             }
@@ -187,10 +204,20 @@ impl BinHeap {
             self.heapify(0);
         }
     }
-    fn delete_last(&mut self) {
+    fn delete_smallest(&mut self) {
         if self.heap.len() > 0 {
-            self.heap.remove(self.heap.len() - 1);
+            self.heap.remove(0);
         }
+    }
+    fn pop(&mut self) -> (usize, usize) {
+        let (key, value) = self.heap[0];
+        self.heap.remove(0);
+        (key, value)
+    }
+    fn pop_key(&mut self) -> usize {
+        let key = self.heap[0].0;
+        self.heap.remove(0);
+        key
     }
     fn print(&self) {
         print!("[ ");
@@ -333,21 +360,28 @@ impl Cache for LRU {
 // Least Frequently Used
 pub struct LFU {
     reg: BinHeap,
+    // reg: Register,
+    // freq: Vec<usize>,
     usage: Vec<(usize, usize)>
 }
 impl LFU {
     pub fn new(max_length: usize, n: usize) -> Self {
         let mut lfu = LFU { 
             reg: BinHeap::new(max_length),
+            // reg: Register::new(max_length),
+            // freq: Vec::new(),
             usage: Vec::new()
         };
-        for i in 0..n {
-            lfu.usage.push((0, i+1));
+        for i in 1..=n {
+            lfu.usage.push((0, i));
         }
         lfu
     }
     fn get_elem_with_value(&self, value: usize) -> (usize, usize) {
-        self.usage[value]
+        self.usage[value - 1]
+    }
+    fn update_key_for_value(&mut self, key: usize, value: usize) {
+        self.usage[value - 1] = (key, value);
     }
 }
 impl Cache for LFU {
@@ -360,17 +394,43 @@ impl Cache for LFU {
     fn access(&mut self, value: usize) -> usize {
         match self.reg.index_of(value) {
             Some(index) => {
-                self.reg.inc_key(index);        // TODO: CO Z ZEREM I PARENTEM??
+                self.reg.inc_key(index);
                 COST_ACCESS
             },
             None => {
                 if self.reg.is_full() {
-                    self.reg.delete_last();
+                    let key = self.reg.pop_key();
+                    self.update_key_for_value(key, value);
                 }
-                // self.reg.push(value);
+                self.reg.push(self.get_elem_with_value(value));
                 COST_FAULT
             },
         }
+        // match self.reg.index_of(value) {
+        //     Some(index) => {
+        //         let freq = self.freq[index] + 1;
+        //         let mut new_index = index;
+        //         self.reg.remove(index);
+        //         self.freq.remove(index);
+        //         while new_index > 0 && self.freq[new_index - 1] < freq {
+        //             new_index -= 1
+        //         }
+        //         self.reg.insert(new_index, value);
+        //         self.freq.insert(new_index, freq);
+        //         COST_ACCESS
+        //     },
+        //     None => {
+        //         if self.reg.is_full() {
+        //             //
+        //         }
+        //         let mut elem_index = 0;
+        //         while elem_index < self.usage.len() && self.usage[elem_index].1 != value {
+        //             elem_index += 1;
+        //         }
+        //         // self.reg.
+        //         COST_FAULT
+        //     }
+        // }
     }
 }
 
