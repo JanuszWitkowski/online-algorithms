@@ -13,6 +13,8 @@ const NAME_RMA:     &'static str = "Random-Markup-Algorithm";
 
 pub trait Cache {
     fn access(&mut self, elem: usize) -> usize;
+    fn change_len(&mut self, new_len: usize);
+    fn clear(&mut self);
     fn name(&self) -> &'static str;
     fn print(&self);
 }
@@ -36,9 +38,9 @@ impl Register {
         self.cache.len() == self.max_len
     }
 
-    fn is_empty(&self) -> bool {
-        self.cache.len() == 0
-    }
+    // fn is_empty(&self) -> bool {
+    //     self.cache.len() == 0
+    // }
 
     fn len(&self) -> usize {
         self.cache.len()
@@ -117,12 +119,12 @@ impl BinHeap {
         }
     }
 
-    fn parent(&self, i: usize) -> Option<usize> {
-        match i > 0 {
-            true => Some((i - 1) / 2),
-            false => None,
-        }
-    }
+    // fn parent(&self, i: usize) -> Option<usize> {
+    //     match i > 0 {
+    //         true => Some((i - 1) / 2),
+    //         false => None,
+    //     }
+    // }
 
     fn left(&self, i: usize) -> Option<usize> {
         match 2 * i + 1 < self.heap.len() {
@@ -179,17 +181,17 @@ impl BinHeap {
         self.heap.len() == self.max_len
     }
 
-    fn is_empty(&self) -> bool {
-        self.heap.len() == 0
-    }
+    // fn is_empty(&self) -> bool {
+    //     self.heap.len() == 0
+    // }
 
-    fn len(&self) -> usize {
-        self.heap.len()
-    }
+    // fn len(&self) -> usize {
+    //     self.heap.len()
+    // }
 
-    fn max_len(&self) -> usize {
-        self.max_len
-    }
+    // fn max_len(&self) -> usize {
+    //     self.max_len
+    // }
 
     fn index_of(&self, value: usize) -> Option<usize> {
         for index in (0..self.heap.len()).rev() {
@@ -208,11 +210,11 @@ impl BinHeap {
         }
     }
 
-    fn delete_smallest(&mut self) {
-        if self.heap.len() > 0 {
-            self.heap.remove(0);
-        }
-    }
+    // fn delete_smallest(&mut self) {
+    //     if self.heap.len() > 0 {
+    //         self.heap.remove(0);
+    //     }
+    // }
 
     fn pop(&mut self) -> (usize, usize) {
         let (key, value) = self.heap[0];
@@ -220,10 +222,14 @@ impl BinHeap {
         (key, value)
     }
 
-    fn pop_key(&mut self) -> usize {
-        let key = self.heap[0].0;
-        self.heap.remove(0);
-        key
+    // fn pop_key(&mut self) -> usize {
+    //     let key = self.heap[0].0;
+    //     self.heap.remove(0);
+    //     key
+    // }
+
+    fn clear(&mut self) {
+        self.heap.clear();
     }
 
     fn print(&self) {
@@ -255,6 +261,14 @@ impl Cache for FIFO {
 
     fn print(&self) {
         self.reg.print();
+    }
+
+    fn clear(&mut self) {
+        self.reg.clear();
+    }
+
+    fn change_len(&mut self, new_len: usize) {
+        self.reg = Register::new(new_len);
     }
 
     fn access(&mut self, elem: usize) -> usize {
@@ -292,6 +306,14 @@ impl Cache for FWF {
         self.reg.print();
     }
 
+    fn clear(&mut self) {
+        self.reg.clear();
+    }
+
+    fn change_len(&mut self, new_len: usize) {
+        self.reg = Register::new(new_len);
+    }
+
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.contains(elem) {
             true => COST_ACCESS,
@@ -327,6 +349,14 @@ impl Cache for RAND {
         self.reg.print();
     }
 
+    fn clear(&mut self) {
+        self.reg.clear();
+    }
+
+    fn change_len(&mut self, new_len: usize) {
+        self.reg = Register::new(new_len);
+    }
+
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.contains(elem) {
             true => COST_ACCESS,
@@ -360,6 +390,14 @@ impl Cache for LRU {
 
     fn print(&self) {
         self.reg.print();
+    }
+
+    fn clear(&mut self) {
+        self.reg.clear();
+    }
+
+    fn change_len(&mut self, new_len: usize) {
+        self.reg = Register::new(new_len);
     }
 
     fn access(&mut self, elem: usize) -> usize {
@@ -410,13 +448,13 @@ impl LFU {
         self.usage[value - 1] = (key, value);
     }
 
-    pub fn print_usage(&self) {
-        print!("{{");
-        for (k, v) in &self.usage {
-            print!(" {}({})", v, k);
-        }
-        println!(" }}");
-    }
+    // pub fn print_usage(&self) {
+    //     print!("{{");
+    //     for (k, v) in &self.usage {
+    //         print!(" {}({})", v, k);
+    //     }
+    //     println!(" }}");
+    // }
 
 }
 
@@ -427,6 +465,17 @@ impl Cache for LFU {
 
     fn print(&self) {
         self.reg.print();
+    }
+
+    fn clear(&mut self) {
+        self.reg.clear();
+        for i in 0..self.usage.len() {
+            self.usage[i].0 = 0;
+        }
+    }
+
+    fn change_len(&mut self, new_len: usize) {
+        self.reg = BinHeap::new(new_len);
     }
 
     fn access(&mut self, value: usize) -> usize {
@@ -472,6 +521,14 @@ impl Cache for RMA {
 
     fn print(&self) {
         self.reg.print();
+    }
+
+    fn clear(&mut self) {
+        self.reg.clear();
+    }
+
+    fn change_len(&mut self, new_len: usize) {
+        self.reg = Register::new(new_len);
     }
 
     fn access(&mut self, elem: usize) -> usize {

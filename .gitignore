@@ -1,4 +1,5 @@
 target/
 lab1/results/
+lab2/results/
 __pycache__/
 *.tar
