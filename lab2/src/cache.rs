@@ -125,14 +125,14 @@ impl BinHeap {
     }
 
     fn left(&self, i: usize) -> Option<usize> {
-        match 2 * i + 1 < self.max_len {
+        match 2 * i + 1 < self.heap.len() {
             true => Some(2 * i + 1),
             false => None,
         }
     }
 
     fn right(&self, i: usize) -> Option<usize> {
-        match 2 * (i + 1) < self.max_len {
+        match 2 * (i + 1) < self.heap.len() {
             true => Some(2 * (i + 1)),
             false => None,
         }
@@ -203,7 +203,8 @@ impl BinHeap {
     fn push(&mut self, elem: (usize, usize)) {
         if self.heap.len() < self.max_len {
             self.heap.insert(0, elem);
-            self.heapify(0);
+            // self.heapify(0);
+            self.inc_key(0);
         }
     }
 
@@ -226,7 +227,7 @@ impl BinHeap {
     }
 
     fn print(&self) {
-        print!("[ ");
+        print!("[");
         for elem in &self.heap {
             print!(" {}({})", elem.1, elem.0);
         }
@@ -409,6 +410,14 @@ impl LFU {
         self.usage[value - 1] = (key, value);
     }
 
+    pub fn print_usage(&self) {
+        print!("{{");
+        for (k, v) in &self.usage {
+            print!(" {}({})", v, k);
+        }
+        println!(" }}");
+    }
+
 }
 
 impl Cache for LFU {
@@ -428,8 +437,8 @@ impl Cache for LFU {
             },
             None => {
                 if self.reg.is_full() {
-                    let key = self.reg.pop_key();
-                    self.update_key_for_value(key, value);
+                    let (key, old_value) = self.reg.pop();
+                    self.update_key_for_value(key, old_value);
                 }
                 self.reg.push(self.get_elem_with_value(value));
                 COST_FAULT
@@ -464,7 +473,7 @@ impl Cache for RMA {
     fn print(&self) {
         self.reg.print();
     }
-    
+
     fn access(&mut self, elem: usize) -> usize {
         match self.reg.index_of(elem) {
             Some(index) => {
@@ -508,8 +517,8 @@ impl Cache for RMA {
 
 #[cfg(test)]
 mod tests {
-    use crate::cache::{Register, Cache, FIFO, LRU};
-    use crate::cache::{NAME_FIFO, NAME_LRU};
+    use crate::cache::{Register, Cache, FIFO, LRU, LFU};
+    use crate::cache::{NAME_FIFO, NAME_LRU, NAME_LFU};
     use crate::cache::{COST_ACCESS, COST_FAULT};
 
     #[test]
@@ -756,6 +765,79 @@ mod tests {
         //     cost = fifo.access(i);
         //     assert_eq!(cost, COST_ACCESS);
         // }
+    }
+
+    // LFU TESTS
+    #[test]
+    fn test_lfu_new() {
+        let max_length = 5;
+        let n = 100;
+        let lfu = LFU::new(max_length, n);
+        assert_eq!(lfu.name(), NAME_LFU);
+    }
+
+    #[test]
+    fn test_lfu_access_adding() {
+        let max_length: usize = 5;
+        let n = 100;
+        let mut lfu = LFU::new(max_length, n);
+        let mut total: usize = 0;
+        let mut cost: usize;
+        for i in 1..=max_length {
+            cost = lfu.access(i);
+            assert_eq!(cost, COST_FAULT);
+            total += cost;
+        }
+        assert_eq!(total, max_length);
+    }
+
+    #[test]
+    fn test_lfu_access_existing_elems() {
+        let max_length: usize = 5;
+        let n = 100;
+        let mut lfu = LFU::new(max_length, n);
+        for i in 1..=max_length {
+            lfu.access(i);
+        }
+        let mut cost: usize;
+        for i in 1..=max_length {
+            cost = lfu.access(i);
+            assert_eq!(cost, COST_ACCESS);
+        }
+    }
+
+    #[test]
+    fn test_lfu_access_fault() {
+        let max_length: usize = 5;
+        let n = 100;
+        let mut lfu = LFU::new(max_length, n);
+        for i in 1..=max_length {
+            lfu.access(i);
+        }
+        // // 5 4 3 2 1
+        // lfu.print();
+        // let new_elem = max_length + 1;  // 6
+        // println!("{}", new_elem);
+        // let mut cost: usize = lfu.access(new_elem);
+        // // 6 5 4 3 2
+        // lfu.print();
+        // assert_eq!(cost, COST_FAULT);
+        // for i in (2..new_elem).rev() {
+        //     cost = lfu.access(i);
+        //     assert_eq!(cost, COST_ACCESS);
+        // }
+        // // 2 3 4 5 6
+        // lfu.print();
+        // cost = lfu.access(1);
+        // // 1 2 3 4 5
+        // lfu.print();
+        // assert_eq!(cost, COST_FAULT);
+        // cost = lfu.access(1);
+        // assert_eq!(cost, COST_ACCESS);
+        // // for i in 3..max_length {
+        // //     cost = fifo.access(i);
+        // //     assert_eq!(cost, COST_ACCESS);
+        // // }
     }
 
     // MISC
