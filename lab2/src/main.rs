@@ -5,5 +5,6 @@ use crate::cache::Cache;
 
 fn main() {
     println!("Hello, world!");
-    experiment::check_lfu();
+    // experiment::check_lfu();
+    experiment::print_constants();
 }
