@@ -8,6 +8,7 @@ use rand::Rng; // 0.8.5
 pub trait Distribution {
     fn new(limit: usize) -> Self where Self: Sized;
     fn get(&self) -> usize;
+    fn change_limit(&mut self, new_limit: usize);
     fn name(&self) -> &'static str;
     fn ev(&self, iter: usize) -> f64 {
         let mut sum: f64 = 0.0;
@@ -35,9 +36,15 @@ fn sanitise_bounds(limit: usize) -> usize {
 
 
 // IMPLEMENTATIONS
+#[derive(Clone)]
 pub struct Uniform {
     limit: usize,
 }
+// impl Uniform {
+//     fn show_limit(&self) -> usize {
+//         self.limit
+//     }
+// }
 impl Distribution for Uniform {
     fn new(limit: usize) -> Self {
         let limit_sanitised = sanitise_bounds(limit);
@@ -46,12 +53,16 @@ impl Distribution for Uniform {
     fn get(&self) -> usize {
         return rand::thread_rng().gen_range(1..=self.limit);
     }
+    fn change_limit(&mut self, new_limit: usize) {
+        self.limit = sanitise_bounds(new_limit);
+    }
     fn name(&self) -> &'static str {
         NAME_UNIFORM
     }
 }
 
 
+#[derive(Clone)]
 pub struct Geometric {
     limit: usize,
     p: f64,
@@ -72,6 +83,9 @@ impl Distribution for Geometric {
         }
         return v as usize;
     }
+    fn change_limit(&mut self, new_limit: usize) {
+        self.limit = sanitise_bounds(new_limit);
+    }
     fn name(&self) -> &'static str {
         NAME_GEOMETRIC
     }
@@ -85,6 +99,7 @@ fn inv_cdf_geometric (x: f64, p: f64) -> u32 {
 }
 
 
+#[derive(Clone)]
 pub struct Harmonic {
     limit: usize,
     hs: Vec<f64>,
@@ -102,6 +117,10 @@ impl Distribution for Harmonic {
             idx += 1;
         }
         return idx as usize + 1;
+    }
+    fn change_limit(&mut self, new_limit: usize) {
+        self.limit = sanitise_bounds(new_limit);
+        self.hs = calculate_harmonic_cdf(self.limit as usize);
     }
     fn name(&self) -> &'static str {
         NAME_HARMONIC
@@ -122,6 +141,7 @@ fn calculate_harmonic_cdf (n: usize) -> Vec<f64> {
 }
 
 
+#[derive(Clone)]
 pub struct Diharmonic {
     limit: usize,
     hs: Vec<f64>,
@@ -140,6 +160,10 @@ impl Distribution for Diharmonic {
         }
         return idx as usize + 1;
     }
+    fn change_limit(&mut self, new_limit: usize) {
+        self.limit = sanitise_bounds(new_limit);
+        self.hs = calculate_generalized_harmonic_cdf(self.limit as usize, 2.0);
+    }
     fn name(&self) -> &'static str {
         NAME_DIHARMONIC
     }
@@ -157,3 +181,17 @@ fn calculate_generalized_harmonic_cdf (n: usize, e: f64) -> Vec<f64> {
     return hs;
 }
 
+
+
+// #[cfg(test)]
+// mod tests {
+//     use crate::distribution::{Distribution, Uniform};
+
+//     #[test]
+//     fn test_change_limit() {
+//         let mut uni = Uniform::new(5);
+//         assert_eq!(uni.show_limit(), 5);
+//         uni.change_limit(11);
+//         assert_eq!(uni.show_limit(), 11);
+//     }
+// }
