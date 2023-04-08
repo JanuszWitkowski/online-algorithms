@@ -63,15 +63,16 @@ pub fn check_all_caches_and_distributions (ns: &[usize], n_of_requests: usize, n
         let mut c_rand = RAND::new(10);
         let mut c_rma = RMA::new(10);
         // let caches: [&mut dyn Cache; 6] = [
-        // let caches: [&mut dyn Cache; 5] = [
-        let caches: [&mut dyn Cache; 1] = [
-            // &mut c_fifo,
-            // &mut c_fwf,
-            // &mut c_lru,
-            // &mut c_lfu,
-            // &mut c_rand,
-            &mut c_rma
+        let caches: [&mut dyn Cache; 5] = [
+        // let caches: [&mut dyn Cache; 1] = [
+            &mut c_fifo,
+            &mut c_fwf,
+            &mut c_lru,
+            &mut c_lfu,
+            &mut c_rand,
+            // &mut c_rma
         ];
+
 
         for cache in caches {
             for dist in dists {
