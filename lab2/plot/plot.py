@@ -16,7 +16,7 @@ def create_plot (files: List[str], search: str, prefix: str, condition: str, n: 
     plt.figure(figsize=(16, 8))
     for filename in files_searched:
         ks, data = open_data_from_csv(filename)
-        plt.plot(np.array(ks).astype('str'), data, label=name_without(proper_name(filename), [search, condition, n, "data"]))
+        plt.plot(np.array(ks).astype('str'), data, marker='o', label=name_without(proper_name(filename), [search, condition, n, "data"]))
     plt.xlabel("Wielkość cache [k]")
     plt.ylabel("Średni koszt operacji access(x)")
     plt.legend()
