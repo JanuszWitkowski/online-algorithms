@@ -1,14 +1,9 @@
-// use crate::dist::uniform::*;
-
-// fn main() {
-//     println!("Hello, world!");
-//     // let u = Uniform::new(10);
-//     // println!("{}", u.name());
-// }
-
-use crate::something::a::*; // <- this is new
-use crate::something::b::*; // <- this is new
+mod dist;
+use crate::dist::distribution::*;
+use crate::dist::uniform::*;
 
 fn main() {
-    let first = A { a: 42, };
+    println!("Hello, world!");
+    let u = Uniform::new(10);
+    println!("{}", u.name());
 }
