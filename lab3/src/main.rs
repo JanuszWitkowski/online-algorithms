@@ -1,14 +1,15 @@
-// use crate::dist::uniform::*;
+mod dist;
+mod fits;
+mod experiment;
 
-// fn main() {
-//     println!("Hello, world!");
-//     // let u = Uniform::new(10);
-//     // println!("{}", u.name());
-// }
+use crate::dist::distribution::*;
+use crate::dist::uniform::*;
 
-use crate::something::a::*; // <- this is new
-use crate::something::b::*; // <- this is new
+// use crate::experiment;
 
 fn main() {
-    let first = A { a: 42, };
+    println!("Hello, world!");
+    let u = Uniform::new(10);
+    println!("{}", u.name());
+    experiment::test_import();
 }
