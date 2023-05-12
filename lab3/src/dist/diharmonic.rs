@@ -15,7 +15,7 @@ impl Distribution for Diharmonic {
         Diharmonic { limit: limit_sanitised, hs }
     }
 
-    fn get(&self) -> usize {
+    fn gen(&self) -> usize {
         let x: f64 = random_uniform();
         let mut idx: usize = 0;
         while idx < self.limit && self.hs[idx] < x {

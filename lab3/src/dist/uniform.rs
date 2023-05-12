@@ -13,7 +13,7 @@ impl Distribution for Uniform {
         Uniform { limit: limit_sanitised }
     }
 
-    fn get(&self) -> usize {
+    fn gen(&self) -> usize {
         random_uniform_in_range(self.limit)
     }
 

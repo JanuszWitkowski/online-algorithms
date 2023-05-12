@@ -17,11 +17,11 @@ impl Bin {
         self.storage + elem <= LIMIT
     }
 
-    fn unprotected_add(&self, elem: f64) {
+    fn unprotected_add(&mut self, elem: f64) {
         self.storage += elem;
     }
 
-    pub fn add(&self, elem: f64) -> bool {
+    pub fn add(&mut self, elem: f64) -> bool {
         match self.can_store(elem) {
             true => {
                 self.unprotected_add(elem);

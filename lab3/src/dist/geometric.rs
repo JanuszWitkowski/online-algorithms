@@ -14,7 +14,7 @@ impl Distribution for Geometric {
         Geometric { limit: limit_sanitised, p: 0.5 }
     }
 
-    fn get(&self) -> usize {
+    fn gen(&self) -> usize {
         let mut x: f64 = 0.0;
         while x <= 0.0 || x >= 1.0 {
             x = random_uniform();
