@@ -36,6 +36,10 @@ impl Fit for BestFit {
         self.bins.insert(i, bin);
     }
 
+    fn reset(&mut self) {
+        self.bins.clear();
+    }
+
     fn bins_number(&self) -> usize {
         self.bins.len()
     }

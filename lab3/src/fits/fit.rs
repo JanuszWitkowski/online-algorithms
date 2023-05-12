@@ -41,5 +41,6 @@ pub trait Fit {
     fn new() -> Self where Self: Sized;
     fn name(&self) -> &'static str;
     fn add(&mut self, elem: f64);
+    fn reset(&mut self);
     fn bins_number(&self) -> usize;
 }

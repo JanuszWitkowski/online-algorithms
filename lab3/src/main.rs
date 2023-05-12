@@ -12,11 +12,13 @@ use crate::fits::fit::*;
 use crate::fits::next::*;
 use crate::fits::first::*;
 use crate::fits::best::*;
+use crate::fits::worst::*;
 
 // use crate::experiment;
 
 const SEQUENCE_LIMIT    : usize = 100;
 const DIST_LIMIT        : usize = 10;
+const N_OF_EXPERIMENTS  : usize = 1_000;
 
 fn main() {
     println!("Hello, world!");
@@ -29,9 +31,9 @@ fn main() {
     println!("{} {}", h.name(), h.ev(1_000_000));
     println!("{} {}", d.name(), d.ev(1_000_000));
 
-    let nf = NextFit::new();
-    let ff = FirstFit::new();
-    let bf = BestFit::new();
+    let mut nf = NextFit::new();
+    let mut ff = FirstFit::new();
+    let mut bf = BestFit::new();
     println!("{}", nf.name());
     println!("{}", ff.name());
     println!("{}", bf.name());
@@ -46,4 +48,6 @@ fn main() {
     // println!("{:?}\n{}", seq, seq.len());
     // let seq = d.random_sequence(SEQUENCE_LIMIT);
     // println!("{:?}\n{}", seq, seq.len());
+
+    experiment::run_bit_packings(&mut nf, &g, SEQUENCE_LIMIT, N_OF_EXPERIMENTS);
 }

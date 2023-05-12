@@ -24,6 +24,11 @@ impl Fit for NextFit {
         }
     }
 
+    fn reset(&mut self) {
+        self.bin.reset();
+        self.bins_number = 1;
+    }
+
     fn bins_number(&self) -> usize {
         self.bins_number
     }
