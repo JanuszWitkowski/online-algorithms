@@ -1,6 +1,6 @@
 use crate::dist::distribution::{Distribution, sanitise_bounds, random_uniform};
 
-const NAME_GEOMETRIC: &str = "geometric";
+const NAME_GEOMETRIC: &str = "Geometric";
 
 #[derive(Clone)]
 pub struct Geometric {

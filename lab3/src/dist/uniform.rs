@@ -1,6 +1,6 @@
 use crate::dist::distribution::{Distribution, sanitise_bounds, random_uniform_in_range};
 
-const NAME_UNIFORM: &str = "uniform";
+const NAME_UNIFORM: &str = "Uniform";
 
 #[derive(Clone)]
 pub struct Uniform {

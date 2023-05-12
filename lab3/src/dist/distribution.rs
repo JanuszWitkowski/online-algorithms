@@ -30,8 +30,7 @@ pub trait Distribution {
                 sequence.push(elem);
             }
         }
-        // sequence.slice_from(sequence_limit).to_vec()
-        sequence[..=sequence_limit].to_vec()
+        sequence[..sequence_limit].to_vec()
     }
 }
 

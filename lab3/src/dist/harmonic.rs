@@ -1,6 +1,6 @@
 use crate::dist::distribution::{Distribution, sanitise_bounds, random_uniform};
 
-const NAME_HARMONIC: &str = "harmonic";
+const NAME_HARMONIC: &str = "Harmonic";
 
 #[derive(Clone)]
 pub struct Harmonic {

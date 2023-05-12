@@ -1,6 +1,6 @@
 use crate::dist::distribution::{Distribution, sanitise_bounds, random_uniform};
 
-const NAME_DIHARMONIC: &str = "diharmonic";
+const NAME_DIHARMONIC: &str = "Diharmonic";
 
 #[derive(Clone)]
 pub struct Diharmonic {
