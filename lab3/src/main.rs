@@ -5,6 +5,9 @@ mod experiment;
 use crate::dist::distribution::*;
 use crate::dist::uniform::*;
 
+// use crate::fits::fit::*;
+// use crate::fits::next::*;
+
 // use crate::experiment;
 
 fn main() {

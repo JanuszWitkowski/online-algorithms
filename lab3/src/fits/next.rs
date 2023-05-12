@@ -32,7 +32,7 @@ impl Fit for NextFit {
 
 #[cfg(test)]
 mod tests {
-    use crate::fits::fit::{Bin, Fit};
+    use crate::fits::fit::{Fit};
     use crate::fits::next::{NextFit};
     use crate::fits::next::{NAME_NEXT};
 
