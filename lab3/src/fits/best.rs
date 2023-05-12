@@ -82,4 +82,14 @@ mod tests {
         assert_eq!(bf.bins[1].show(), 0.6);
         assert_eq!(bf.bins[2].show(), 0.8);
     }
+
+    // #[test]
+    // fn test_best_sorting() {
+    //     let mut bf = BestFit::new();
+    //     let seq = [.6, .6, ];
+    //     for elem in seq {
+    //         bf.add(elem);
+    //     }
+    //     assert_eq!(bf.bins_number(), 3);
+    // }
 }
