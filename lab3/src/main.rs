@@ -16,7 +16,8 @@ use crate::fits::worst::*;
 
 const SEQUENCE_LIMIT    : usize = 100;
 const DIST_LIMIT        : usize = 10;
-const N_OF_EXPERIMENTS  : usize = 1;
+// const N_OF_EXPERIMENTS  : usize = 1_000_000;
+const N_OF_EXPERIMENTS  : usize = 10;
 
 fn main() {
     let fits: [&mut dyn Fit; 4] = [
@@ -36,4 +37,5 @@ fn main() {
             experiment::run_bit_packings(fit, dist, SEQUENCE_LIMIT, N_OF_EXPERIMENTS);
         }
     }
+    println!("Done!");
 }

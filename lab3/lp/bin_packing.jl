@@ -16,6 +16,7 @@ function solve(sequence::Vector{Float64})
     @constraint(model, [j in Elements], sum(s[i,j] * sequence[i] for i in Elements) <= 1.0)
     @objective(model, Min, m)
 
+    set_silent(model)
     optimize!(model)
     status = termination_status(model)
     if status == MOI.OPTIMAL
@@ -25,24 +26,35 @@ function solve(sequence::Vector{Float64})
     end
 end
 
+function extract_solution(status, obj, m, s, x)
+    if status == MOI.OPTIMAL
+        return trunc(Int, obj)
+    else
+        return ceil(sum(x))
+    end
+end
+
+function print_solution(status, obj, m, s, x)
+    n = length(x)
+    if status == MOI.OPTIMAL
+        # println(s)
+        for i in 1:n
+            print(x[i], "->", sum(j * s[i,j] for j in 1:n), "; ")
+        end
+        println()
+        for j in 1:n
+            print(j, "(", sum(s[i,j] * x[i] for i in 1:n), ") ")
+        end
+        println()
+        println(m)
+    else
+        println(status)
+    end
+    solution = extract_solution(status, obj, s, m, x)
+    println("Solution: ", solution)
+end
+
 # x = [0.6, 0.4, 0.6, 0.4]
 x = [.1, .2, .3, .4, .5, .6, .7, .8, .9]
-n = length(x)
 (status, obj, m, s) = solve(x)
-if status == MOI.OPTIMAL
-    # println(s)
-    for i in 1:n
-        print(x[i], "->", sum(j * s[i,j] for j in 1:n), "; ")
-    end
-    println()
-    for j in 1:n
-        print(j, "(", sum(s[i,j] * x[i] for i in 1:n), ") ")
-    end
-    println()
-    println(m)
-    println(trunc(Int, obj))
-else
-    println(status)
-    estimation = ceil(sum(x))
-    println(estimation)
-end
+print_solution(status, obj, m, s, x)
