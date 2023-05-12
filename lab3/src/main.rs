@@ -11,6 +11,7 @@ use crate::dist::diharmonic::*;
 use crate::fits::fit::*;
 use crate::fits::next::*;
 use crate::fits::first::*;
+use crate::fits::best::*;
 
 // use crate::experiment;
 
@@ -30,8 +31,10 @@ fn main() {
 
     let nf = NextFit::new();
     let ff = FirstFit::new();
+    let bf = BestFit::new();
     println!("{}", nf.name());
     println!("{}", ff.name());
+    println!("{}", bf.name());
 
     experiment::test_import();
 

@@ -13,6 +13,10 @@ impl Bin {
         self.storage = 0.0;
     }
 
+    pub fn show(&self) -> f64 {
+        self.storage
+    }
+
     fn can_store(&self, elem: f64) -> bool {
         self.storage + elem <= LIMIT
     }
