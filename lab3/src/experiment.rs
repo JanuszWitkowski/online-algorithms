@@ -23,7 +23,7 @@ pub fn run_bit_packings(fit: &mut dyn Fit, dist: &dyn Distribution, seq_limit: u
         sequence = dist.random_sequence(seq_limit);
         cost = single_bin_pack(fit, &sequence);
         // println!("\t({:?}, {})", sequence, cost);
-        writeln!(output, "\t({:?}, {})", sequence, cost).unwrap();
+        writeln!(output, "\t({:?},{})", sequence, cost).unwrap();
     }
     writeln!(output, "]").unwrap();
 }
