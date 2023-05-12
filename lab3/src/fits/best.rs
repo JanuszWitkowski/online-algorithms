@@ -30,7 +30,7 @@ impl Fit for BestFit {
         // Sorting (descending by amount of space taken)
         // TODO: Perhaps change it to binary search?
         let content = bin.show();
-        while i > 0 && self.bins[i-1].show() > content {
+        while i > 0 && self.bins[i-1].show() < content {
             i -= 1;
         }
         self.bins.insert(i, bin);
@@ -78,9 +78,9 @@ mod tests {
             bf.add(elem);
         }
         assert_eq!(bf.bins_number(), 3);
-        assert_eq!(bf.bins[0].show(), 0.6);
+        assert_eq!(bf.bins[0].show(), 0.8);
         assert_eq!(bf.bins[1].show(), 0.6);
-        assert_eq!(bf.bins[2].show(), 0.8);
+        assert_eq!(bf.bins[2].show(), 0.6);
     }
 
     // #[test]

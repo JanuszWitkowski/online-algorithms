@@ -16,7 +16,7 @@ impl Fit for WorstFit {
     }
 
     fn add(&mut self, elem: f64) {
-        if self.bins.len() == 0 {
+        if self.bins.is_empty() {
             let mut bin = Bin::new();
             bin.add(elem);
             self.bins.push(bin);
@@ -31,7 +31,7 @@ impl Fit for WorstFit {
             // Sorting (ascending by amount of space taken)
             // TODO: Perhaps change it to binary search?
             let content = bin.show();
-            let i = 0;
+            let mut i = 0;
             while i < self.bins.len() && self.bins[i].show() < content {
                 i += 1;
             }
@@ -41,5 +41,48 @@ impl Fit for WorstFit {
 
     fn bins_number(&self) -> usize {
         self.bins.len()
+    }
+}
+
+
+#[cfg(test)]
+mod tests {
+    use crate::fits::fit::{Fit};
+    use crate::fits::worst::{WorstFit};
+    use crate::fits::worst::{NAME_WORST};
+
+    #[test]
+    fn test_worst_new() {
+        let wf = WorstFit::new();
+        assert_eq!(wf.name(), NAME_WORST);
+    }
+
+    #[test]
+    fn test_worst_add_to_three_fulls() {
+        let mut wf = WorstFit::new();
+        // |(0.4+0.4+0.2), (0.4+0.6), (0.4+0.2+0.2+0.2)| == 3
+        let seq = [0.4, 0.4, 0.4, 0.6, 0.4, 0.2, 0.2, 0.2, 0.2];
+        for elem in seq {
+            wf.add(elem);
+        }
+        assert_eq!(wf.bins_number(), 3);
+        assert_eq!(wf.bins[0].show(), 1.0);
+        assert_eq!(wf.bins[1].show(), 1.0);
+        assert_eq!(wf.bins[2].show(), 1.0);
+    }
+
+    #[test]
+    fn test_worst_add_not_optimal() {
+        let mut wf = WorstFit::new();
+        // |(0.8), (0.6), (0.6)| == 3
+        // Optimal would be |(1.0), (1.0)| == 2
+        let seq = [0.4, 0.4, 0.6, 0.6];
+        for elem in seq {
+            wf.add(elem);
+        }
+        assert_eq!(wf.bins_number(), 3);
+        assert_eq!(wf.bins[0].show(), 0.6);
+        assert_eq!(wf.bins[1].show(), 0.6);
+        assert_eq!(wf.bins[2].show(), 0.8);
     }
 }
