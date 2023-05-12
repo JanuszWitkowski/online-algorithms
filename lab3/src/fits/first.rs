@@ -30,3 +30,38 @@ impl Fit for FirstFit {
         self.bins.len()
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use crate::fits::fit::{Fit};
+    use crate::fits::first::{FirstFit};
+    use crate::fits::first::{NAME_FIRST};
+
+    #[test]
+    fn test_first_new() {
+        let ff = FirstFit::new();
+        assert_eq!(ff.name(), NAME_FIRST);
+    }
+
+    #[test]
+    fn test_first_add_to_two_fulls() {
+        let mut ff = FirstFit::new();
+        let seq = [0.3, 0.4, 0.5, 0.3, 0.2, 0.3];   // |(0.3+0.4+0.3), (0.5+0.2+0.3)| == 2
+        for elem in seq {
+            ff.add(elem);
+        }
+        assert_eq!(ff.bins_number(), 2);
+    }
+
+    #[test]
+    fn test_first_add_not_optimal() {
+        let mut ff = FirstFit::new();
+        let seq = [0.3, 0.9, 0.1, 0.7]; // |(0.3+0.1), (0.9), (0.7)| == 3
+        // Optimal would be |(0.3+0.7), (0.9+0.1)| == 2
+        for elem in seq {
+            ff.add(elem);
+        }
+        assert_eq!(ff.bins_number(), 3);
+    }
+}

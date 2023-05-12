@@ -49,7 +49,7 @@ mod tests {
         for elem in seq {
             nf.add(elem);
         }
-        assert_eq!(nf.bins_number, 1);
+        assert_eq!(nf.bins_number(), 1);
     }
 
     #[test]
@@ -59,7 +59,7 @@ mod tests {
         for elem in seq {
             nf.add(elem);
         }
-        assert_eq!(nf.bins_number, 2);
+        assert_eq!(nf.bins_number(), 2);
     }
 
     #[test]
@@ -69,7 +69,7 @@ mod tests {
         for elem in seq {
             nf.add(elem);
         }
-        assert_eq!(nf.bins_number, 3);
+        assert_eq!(nf.bins_number(), 3);
     }
 
     #[test]
@@ -79,7 +79,7 @@ mod tests {
         for elem in seq {
             nf.add(elem);
         }
-        assert_eq!(nf.bins_number, 1_000);
+        assert_eq!(nf.bins_number(), 1_000);
     }
 
     #[test]
@@ -95,6 +95,6 @@ mod tests {
         for elem in seq2 {
             nf.add(elem);
         }
-        assert_eq!(nf.bins_number, 3_000);
+        assert_eq!(nf.bins_number(), 3_000);
     }
 }
