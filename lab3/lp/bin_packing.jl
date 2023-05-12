@@ -1,7 +1,7 @@
 using JuMP
 using Cbc
 
-function solve(sequence::Matrix{Float64})
+function solve(sequence::Vector{Float64})
     n = length(sequence)
     Elements = 1:n
 
@@ -25,8 +25,8 @@ function solve(sequence::Matrix{Float64})
     end
 end
 
-# x = [0.6 0.4 0.6 0.4]
-x = [.1 .2 .3 .4 .5 .6 .7 .8 .9]
+# x = [0.6, 0.4, 0.6, 0.4]
+x = [.1, .2, .3, .4, .5, .6, .7, .8, .9]
 n = length(x)
 (status, obj, m, s) = solve(x)
 if status == MOI.OPTIMAL
@@ -43,4 +43,6 @@ if status == MOI.OPTIMAL
     println(trunc(Int, obj))
 else
     println(status)
+    estimation = ceil(sum(x))
+    println(estimation)
 end

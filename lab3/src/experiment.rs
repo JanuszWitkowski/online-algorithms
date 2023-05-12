@@ -1,18 +1,5 @@
 use crate::dist::distribution::*;
-// use crate::dist::uniform::*;
-// use crate::dist::geometric::*;
-// use crate::dist::harmonic::*;
-// use crate::dist::diharmonic::*;
-
 use crate::fits::fit::*;
-// use crate::fits::next::*;
-// use crate::fits::first::*;
-// use crate::fits::best::*;
-// use crate::fits::worst::*;
-
-pub fn test_import() {
-    println!("Hello World! This is a test.");
-}
 
 fn single_bin_pack(fit: &mut dyn Fit, sequence: &Vec<f64>) -> usize {
     fit.reset();
