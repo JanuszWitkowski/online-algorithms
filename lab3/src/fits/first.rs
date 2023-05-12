@@ -52,6 +52,8 @@ mod tests {
             ff.add(elem);
         }
         assert_eq!(ff.bins_number(), 2);
+        assert_eq!(ff.bins[0].show(), 1.0);
+        assert_eq!(ff.bins[1].show(), 1.0);
     }
 
     #[test]
@@ -63,5 +65,8 @@ mod tests {
             ff.add(elem);
         }
         assert_eq!(ff.bins_number(), 3);
+        assert_eq!(ff.bins[0].show(), 0.4);
+        assert_eq!(ff.bins[1].show(), 0.9);
+        assert_eq!(ff.bins[2].show(), 0.7);
     }
 }

@@ -40,3 +40,46 @@ impl Fit for BestFit {
         self.bins.len()
     }
 }
+
+
+#[cfg(test)]
+mod tests {
+    use crate::fits::fit::{Fit};
+    use crate::fits::best::{BestFit};
+    use crate::fits::best::{NAME_BEST};
+
+    #[test]
+    fn test_best_new() {
+        let bf = BestFit::new();
+        assert_eq!(bf.name(), NAME_BEST);
+    }
+
+    #[test]
+    fn test_best_add_to_three_fulls() {
+        let mut bf = BestFit::new();
+        // |(0.4+0.4+0.2), (0.4+0.6), (0.4+0.2+0.2+0.2)| == 3
+        let seq = [0.4, 0.4, 0.4, 0.6, 0.4, 0.2, 0.2, 0.2, 0.2];
+        for elem in seq {
+            bf.add(elem);
+        }
+        assert_eq!(bf.bins_number(), 3);
+        assert_eq!(bf.bins[0].show(), 1.0);
+        assert_eq!(bf.bins[1].show(), 1.0);
+        assert_eq!(bf.bins[2].show(), 1.0);
+    }
+
+    #[test]
+    fn test_best_add_not_optimal() {
+        let mut bf = BestFit::new();
+        // |(0.8), (0.6), (0.6)| == 3
+        // Optimal would be |(1.0), (1.0)| == 2
+        let seq = [0.4, 0.4, 0.6, 0.6];
+        for elem in seq {
+            bf.add(elem);
+        }
+        assert_eq!(bf.bins_number(), 3);
+        assert_eq!(bf.bins[0].show(), 0.6);
+        assert_eq!(bf.bins[1].show(), 0.6);
+        assert_eq!(bf.bins[2].show(), 0.8);
+    }
+}

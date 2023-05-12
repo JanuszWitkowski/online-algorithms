@@ -50,6 +50,7 @@ mod tests {
             nf.add(elem);
         }
         assert_eq!(nf.bins_number(), 1);
+        assert_eq!(nf.bin.show(), 1.0);
     }
 
     #[test]
@@ -60,6 +61,7 @@ mod tests {
             nf.add(elem);
         }
         assert_eq!(nf.bins_number(), 2);
+        assert_eq!(nf.bin.show(), 0.5);
     }
 
     #[test]
@@ -70,6 +72,7 @@ mod tests {
             nf.add(elem);
         }
         assert_eq!(nf.bins_number(), 3);
+        assert_eq!(nf.bin.show(), 0.9);
     }
 
     #[test]
