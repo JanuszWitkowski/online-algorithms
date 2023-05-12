@@ -9,9 +9,9 @@ impl Bin {
         Bin{ storage: 0.0 }
     }
 
-    // fn is_full(&self) -> bool {
-    //     self.storage >= LIMIT 
-    // }
+    pub fn reset(&mut self) {
+        self.storage = 0.0;
+    }
 
     fn can_store(&self, elem: f64) -> bool {
         self.storage + elem <= LIMIT
@@ -36,6 +36,6 @@ impl Bin {
 pub trait Fit {
     fn new() -> Self where Self: Sized;
     fn name(&self) -> &'static str;
-    fn add(&self, elem: f64);
+    fn add(&mut self, elem: f64);
     fn bins_number(&self) -> usize;
 }
