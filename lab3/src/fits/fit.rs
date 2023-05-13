@@ -17,7 +17,7 @@ impl Bin {
         self.storage
     }
 
-    fn can_store(&self, elem: f64) -> bool {
+    pub fn can_store(&self, elem: f64) -> bool {
         self.storage + elem <= LIMIT
     }
 

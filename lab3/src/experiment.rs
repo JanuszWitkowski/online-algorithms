@@ -13,17 +13,30 @@ fn single_bin_pack(fit: &mut dyn Fit, sequence: &Vec<f64>) -> usize {
 
 pub fn run_bit_packings(fit: &mut dyn Fit, dist: &dyn Distribution, seq_limit: usize, iter: usize) {
     let mut sequence;
-    let mut cost;
+    let (mut cost, mut opt);
+    let (mut cost_sum, mut opt_sum);
+    let (mut ratio, competitive);
     // println!("{}_{}", fit.name(), dist.name());
     let filename = format!("data_{}_{}.jl", fit.name(), dist.name());
     let mut output = File::create(filename).unwrap();
     println!("Writing results for {}_{}...", fit.name(), dist.name());
     writeln!(output, "xs = [").unwrap();
+    cost_sum = 0;
+    opt_sum = 0;
     for _ in 0..iter {
         sequence = dist.random_sequence(seq_limit);
         cost = single_bin_pack(fit, &sequence);
+        opt = estimated_optimum(&sequence);
+        ratio = (cost as f64) / (opt as f64);
+        cost_sum += cost;
+        opt_sum += opt;
         // println!("\t({:?}, {})", sequence, cost);
         writeln!(output, "\t({:?},{})", sequence, cost).unwrap();
     }
+    competitive = (cost_sum as f64) / (opt_sum as f64);
     writeln!(output, "]").unwrap();
+}
+
+fn estimated_optimum(seq: &[f64]) -> usize {
+    seq.iter().sum::<f64>().ceil() as usize
 }
