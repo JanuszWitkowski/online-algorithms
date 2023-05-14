@@ -17,42 +17,20 @@ impl Fit for RandomFit {
     }
 
     fn add(&mut self, elem: f64) {
-        // let mut able_to_store: Vec<&mut Bin> = self.bins.iter().filter(|bin| bin.can_store(elem)).collect();
-        let mut able_to_store: Vec<*mut Bin> = Vec::new();
-        for mut bin in &mut *self.bins {
-            if bin.can_store(elem) {
-                able_to_store.push(bin);
+        let mut indexes_able_to_store: Vec<usize> = Vec::new();
+        for i in 0..self.bins.len() {
+            if self.bins[i].can_store(elem) {
+                indexes_able_to_store.push(i);
             }
         }
-        if able_to_store.len() == 0 {
+        if indexes_able_to_store.is_empty() {
             let mut bin = Bin::new();
             bin.add(elem);
             self.bins.push(bin);
         } else {
-            let chosen = fastrand::usize(..able_to_store.len());
-            &able_to_store[chosen].add(elem);
+            let chosen = fastrand::usize(..indexes_able_to_store.len());
+            self.bins[indexes_able_to_store[chosen]].add(elem);
         }
-        // if self.bins.is_empty() {
-        //     let mut bin = Bin::new();
-        //     bin.add(elem);
-        //     self.bins.push(bin);
-        // } else {
-        //     let mut bin;
-        //     if self.bins[0].add(elem) {     // If adding an element was successful
-        //         bin = self.bins.remove(0);
-        //     } else {
-        //         bin = Bin::new();
-        //         bin.add(elem);
-        //     }
-        //     // Sorting (ascending by amount of space taken)
-        //     // TODO: Perhaps change it to binary search?
-        //     let content = bin.show();
-        //     let mut i = 0;
-        //     while i < self.bins.len() && self.bins[i].show() < content {
-        //         i += 1;
-        //     }
-        //     self.bins.insert(i, bin);
-        //     }
     }
 
     fn reset(&mut self) {
