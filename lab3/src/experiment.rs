@@ -41,7 +41,7 @@ pub fn run_bit_packings(
     // writeln!(output, "]").unwrap();
     let filename = format!("konk_{}_{}.txt", fit.name(), dist.name());
     let mut output = File::create(filename).unwrap();
-    writeln!(output, "{}", competitive);
+    writeln!(output, "{}", competitive).unwrap();
 }
 
 pub fn multiple_bit_packings(
@@ -78,7 +78,7 @@ pub fn multiple_bit_packings(
     competitive = (cost_sum as f64) / (opt_sum as f64);
     let filename = format!("konk_{}_{}.txt", fit.name(), dist.name());
     let mut output = File::create(filename).unwrap();
-    writeln!(output, "{}", competitive);
+    writeln!(output, "{}", competitive).unwrap();
 }
 
 fn estimated_optimum(seq: &[f64]) -> usize {

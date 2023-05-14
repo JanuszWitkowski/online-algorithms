@@ -17,7 +17,7 @@ use crate::fits::worst::*;
 
 const SEQUENCE_LIMIT    : usize = 100;
 const DIST_LIMIT        : usize = 10;
-const N_OF_EXPERIMENTS  : usize = 100_000;
+const N_OF_EXPERIMENTS  : usize = 1_000_000;
 // const N_OF_EXPERIMENTS  : usize = 10;
 const RANDOMFIT_ITERS   : usize = 10_000;
 
