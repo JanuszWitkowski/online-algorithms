@@ -17,8 +17,8 @@ use crate::fits::worst::*;
 
 const SEQUENCE_LIMIT    : usize = 100;
 const DIST_LIMIT        : usize = 10;
-// const N_OF_EXPERIMENTS  : usize = 1_000_000;
-const N_OF_EXPERIMENTS  : usize = 10;
+const N_OF_EXPERIMENTS  : usize = 100_000;
+// const N_OF_EXPERIMENTS  : usize = 10;
 const RANDOMFIT_ITERS   : usize = 10_000;
 
 fn main() {
@@ -39,7 +39,6 @@ fn main() {
         for dist in distributions {
             experiment::run_bit_packings(fit, dist, SEQUENCE_LIMIT, N_OF_EXPERIMENTS);
         }
-        // experiment::multiple_bit_packings(&mut fit_random, dist, SEQUENCE_LIMIT, N_OF_EXPERIMENTS, RANDOMFIT_ITERS);
     }
     for dist in distributions {
         experiment::multiple_bit_packings(&mut fit_random, dist, SEQUENCE_LIMIT, N_OF_EXPERIMENTS, RANDOMFIT_ITERS);
