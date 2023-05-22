@@ -1,0 +1,29 @@
+NextFit
+    Uniform: 1.2855593755908654
+    Geometric: 1.2970252205685768
+    Harmonic: 1.2893228651698405
+    Diharmonic: 1.2991237518005303
+
+RandomFit
+    Uniform: 1.1830985915492958
+    Geometric: 1.1290944123314066
+    Harmonic: 1.140461215932914
+    Diharmonic: 1.1381322957198443
+
+FirstFit
+    Uniform: 1.1685051215514617
+    Geometric: 1.1345366940028176
+    Harmonic: 1.1573987206316179
+    Diharmonic: 1.1376443828600966
+
+BestFit
+    Uniform: 1.1648714296186375
+    Geometric: 1.1262007289804372
+    Harmonic: 1.1524509756391486
+    Diharmonic: 1.129378139835046
+
+WorstFit
+    Uniform: 1.1846787939649541
+    Geometric: 1.172129221482752
+    Harmonic: 1.1800734843554799
+    Diharmonic: 1.174449992448953
