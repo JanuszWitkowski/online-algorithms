@@ -2,7 +2,7 @@ use crate::graf::graph::Graph;
 use crate::algs::alg::Alg;
 
 pub struct MoveToMin {
-    graph:      Graph,
+    graph:      &'static mut dyn Graph,
     phase_reqs: Vec<usize>,
     phase_dur:  usize,
     req_ctr:    usize,
@@ -14,10 +14,10 @@ pub struct MoveToMin {
 impl MoveToMin {
     fn minimizing_node(&self) -> usize {
         let mut minimizing_node = 1;
-        let mut node_sum = self.phase_reqs.map(|z| self.distance(z, 1)).sum.collect();
+        let mut node_sum = self.phase_reqs.iter().map(|z| self.graph.distance(*z, 1)).sum::<usize>();
         let mut min_value = node_sum;
-        for node in 2..=self.number_of_nodes {
-            node_sum = self.phase_reqs.map(|z| self.distance(z, node)).sum.collect();
+        for node in 2..=self.graph.number_of_nodes() {
+            node_sum = self.phase_reqs.iter().map(|z| self.graph.distance(*z, node)).sum::<usize>();
             match node_sum < min_value {
                 true => {
                     min_value = node_sum;
@@ -32,7 +32,7 @@ impl MoveToMin {
 
 
 impl Alg for MoveToMin {
-    fn new(graph: Graph, d_value: usize) -> Self {
+    fn new(graph: &'static mut dyn Graph, d_value: usize) -> Self {
         MoveToMin{ 
             graph, 
             phase_reqs: Vec::new(),
@@ -59,7 +59,7 @@ impl Alg for MoveToMin {
         self.req_ctr += 1;
 
         if self.req_ctr >= self.phase_dur {
-            cost += self.move_cost * self.graph.move_resource(self.minimizing_node);
+            cost += self.move_cost * self.graph.move_resource(self.minimizing_node());
             self.phase_reqs.clear();
             self.req_ctr = 0;
         }
