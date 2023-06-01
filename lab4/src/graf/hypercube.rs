@@ -25,9 +25,9 @@ impl Graph for Hypercube {
         counter
     }
 
-    fn request(&self, dest: usize) -> usize {
-        self.distance(self.resource_location, dest)
-    }
+    // fn request(&self, dest: usize) -> usize {
+    //     self.distance(self.resource_location, dest)
+    // }
 
     fn move_resource(&mut self, dest: usize) -> usize {
         let prev_location = self.resource_location;
