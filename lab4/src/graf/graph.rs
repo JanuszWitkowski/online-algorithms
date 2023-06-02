@@ -6,6 +6,7 @@ pub trait Graph {
     fn resource_location(&self) -> usize;
     fn set_resource_location(&mut self, dest: usize);
     fn number_of_nodes(&self) -> usize;
+    fn name(&self) -> &'static str;
 
     fn request(&self, dest: usize) -> usize {
         self.distance(self.resource_location(), dest)

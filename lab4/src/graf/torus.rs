@@ -93,6 +93,10 @@ impl Graph for Torus {
     fn number_of_nodes(&self) -> usize {
         self.number_of_nodes
     }
+
+    fn name(&self) -> &'static str {
+        "Torus"
+    }
 }
 
 

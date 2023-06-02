@@ -3,7 +3,6 @@ use crate::algs::alg::Alg;
 use fastrand;
 
 pub struct Flip {
-    graph:      &'static mut dyn Graph,
     move_cost:  usize,
     total_cost: usize,
     move_prob:  f64,    // 1/2D
@@ -15,9 +14,8 @@ pub struct Flip {
 
 
 impl Alg for Flip {
-    fn new(graph: &'static mut dyn Graph, d_value: usize) -> Self {
+    fn new(d_value: usize) -> Self {
         Flip {
-            graph,
             move_cost: d_value,
             total_cost: 0,
             move_prob: 1.0/(2.0 * d_value as f64)
@@ -32,12 +30,16 @@ impl Alg for Flip {
         self.total_cost = 0;
     }
 
-    fn request(&mut self, dest: usize) -> usize {
+    fn request(&mut self, graph: &mut dyn Graph, dest: usize) -> usize {
         let cost = match fastrand::f64() <= self.move_prob {
-            true => self.move_cost * self.graph.move_resource(dest),
-            false => self.graph.request(dest)
+            true => self.move_cost * graph.move_resource(dest),
+            false => graph.request(dest)
         };
         self.total_cost += cost;
         cost
+    }
+
+    fn name(&self) -> &'static str {
+        "Flip"
     }
 }

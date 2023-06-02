@@ -46,4 +46,8 @@ impl Graph for Hypercube {
     fn number_of_nodes(&self) -> usize {
         self.number_of_nodes
     }
+
+    fn name(&self) -> &'static str {
+        "Hypercube"
+    }
 }
