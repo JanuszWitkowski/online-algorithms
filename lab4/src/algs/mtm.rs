@@ -18,12 +18,16 @@ impl MoveToMin {
         let mut min_value = node_sum;
         for node in 2..=self.graph.number_of_nodes() {
             node_sum = self.phase_reqs.iter().map(|z| self.graph.distance(*z, node)).sum::<usize>();
-            match node_sum < min_value {
-                true => {
-                    min_value = node_sum;
-                    minimizing_node = node;
-                },
-                _ => {},
+            // match node_sum < min_value {
+            //     true => {
+            //         min_value = node_sum;
+            //         minimizing_node = node;
+            //     },
+            //     _ => {},
+            // }
+            if let true = node_sum < min_value {
+                min_value = node_sum;
+                minimizing_node = node;
             }
         }
         minimizing_node

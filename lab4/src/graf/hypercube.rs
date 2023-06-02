@@ -29,14 +29,18 @@ impl Graph for Hypercube {
     //     self.distance(self.resource_location, dest)
     // }
 
-    fn move_resource(&mut self, dest: usize) -> usize {
-        let prev_location = self.resource_location;
-        self.resource_location = dest;
-        self.distance(prev_location, dest)
-    }
+    // fn move_resource(&mut self, dest: usize) -> usize {
+    //     let prev_location = self.resource_location;
+    //     self.resource_location = dest;
+    //     self.distance(prev_location, dest)
+    // }
 
     fn resource_location(&self) -> usize {
         self.resource_location
+    }
+
+    fn set_resource_location(&mut self, dest: usize) {
+        self.resource_location = dest;
     }
 
     fn number_of_nodes(&self) -> usize {
