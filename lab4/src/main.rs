@@ -6,7 +6,7 @@ mod experiment;
 const NUMBER_OF_VERTICES:   usize = 64;
 const MIGRATION_COST_MULT:  usize = 32;
 const NUMBER_OF_REQUESTS:   usize = 1024;
-const NUMBER_OF_EXPERIMENTS:    usize = 100;
+const NUMBER_OF_EXPERIMENTS:    usize = 10_000;
 
 fn main() {
     let timer = std::time::Instant::now();
