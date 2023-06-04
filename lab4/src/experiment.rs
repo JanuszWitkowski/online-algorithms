@@ -25,32 +25,32 @@ pub fn run(
         number_of_requests: usize, 
         number_of_experiments:  usize
 ) {
-    // let mut graphs: [&mut dyn Graph; 2] = [
-    //     &mut Torus::new(number_of_nodes),
-    //     &mut Hypercube::new(number_of_nodes)
-    // ];
-    // let mut algs: [&mut dyn Alg; 2] = [
-    //     &mut MoveToMin::new(migration_cost),
-    //     &mut Flip::new(migration_cost)
-    // ];
-    // let dists: [&mut dyn Distribution; 3] = [
-    //     &mut Uniform::new(number_of_nodes),
-    //     &mut Harmonic::new(number_of_nodes),
-    //     &mut Diharmonic::new(number_of_nodes)
-    // ];
-    let mut graphs: [&mut dyn Graph; 1] = [
+    let mut graphs: [&mut dyn Graph; 2] = [
         &mut Torus::new(number_of_nodes),
-        // &mut Hypercube::new(number_of_nodes)
+        &mut Hypercube::new(number_of_nodes)
     ];
-    let mut algs: [&mut dyn Alg; 1] = [
+    let mut algs: [&mut dyn Alg; 2] = [
         &mut MoveToMin::new(migration_cost),
-        // &mut Flip::new(migration_cost)
+        &mut Flip::new(migration_cost)
     ];
-    let dists: [&mut dyn Distribution; 1] = [
+    let dists: [&mut dyn Distribution; 3] = [
         &mut Uniform::new(number_of_nodes),
-        // &mut Harmonic::new(number_of_nodes),
-        // &mut Diharmonic::new(number_of_nodes)
+        &mut Harmonic::new(number_of_nodes),
+        &mut Diharmonic::new(number_of_nodes)
     ];
+    // let mut graphs: [&mut dyn Graph; 1] = [
+    //     &mut Torus::new(number_of_nodes),
+    //     // &mut Hypercube::new(number_of_nodes)
+    // ];
+    // let mut algs: [&mut dyn Alg; 1] = [
+    //     &mut MoveToMin::new(migration_cost),
+    //     // &mut Flip::new(migration_cost)
+    // ];
+    // let dists: [&mut dyn Distribution; 1] = [
+    //     &mut Uniform::new(number_of_nodes),
+    //     // &mut Harmonic::new(number_of_nodes),
+    //     // &mut Diharmonic::new(number_of_nodes)
+    // ];
     let mut sum_of_totals:  f64;
     let (mut total, mut avg);
 
