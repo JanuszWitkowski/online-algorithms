@@ -1,0 +1,12 @@
+../results/expv_avg_Hypercube_Flip_Diharmonic..csv:	1.7077076171875
+../results/expv_avg_Hypercube_Flip_Harmonic..csv:	3.618724609375
+../results/expv_avg_Hypercube_Flip_Uniform..csv:	4.45428720703125
+../results/expv_avg_Hypercube_MoveToMin_Diharmonic..csv:	0.74295078125
+../results/expv_avg_Hypercube_MoveToMin_Harmonic..csv:	2.729637890625
+../results/expv_avg_Hypercube_MoveToMin_Uniform..csv:	5.94930224609375
+../results/expv_avg_Torus_Flip_Diharmonic..csv:	1.4863958984375
+../results/expv_avg_Torus_Flip_Harmonic..csv:	3.5873646484375
+../results/expv_avg_Torus_Flip_Uniform..csv:	4.4592349609375
+../results/expv_avg_Torus_MoveToMin_Diharmonic..csv:	0.62289775390625
+../results/expv_avg_Torus_MoveToMin_Harmonic..csv:	2.43105576171875
+../results/expv_avg_Torus_MoveToMin_Uniform..csv:	5.968671875

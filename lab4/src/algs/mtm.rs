@@ -61,7 +61,7 @@ impl Alg for MoveToMin {
         self.req_ctr += 1;
 
         if self.req_ctr >= self.phase_dur {
-            cost += self.move_cost * graph.move_resource(self.minimizing_node(graph));
+            cost += self.move_cost * graph.move_resource(self.minimizing_node(graph));   // UNCOMMENT THIS!
             self.phase_reqs.clear();
             self.req_ctr = 0;
         }
