@@ -86,6 +86,7 @@ pub struct Network {
     d_value:    usize,
     acc_cost:   usize,
     acc_copies: usize,
+    req_ctr:    usize,
 }
 
 impl Network {
@@ -98,6 +99,7 @@ impl Network {
             d_value: d,
             acc_cost: 0,
             acc_copies: 1,
+            req_ctr: 0,
         };
         graph.vertices.push(Vertice::new(1, Phase::FOUR, true, d));
         for id in 2..=n {
@@ -218,9 +220,19 @@ impl Network {
         for vertice_id in 1..=self.vertices.len() {
             cost = self.request_on_vertice(request_type, request_id, vertice_id);
             total_cost += cost;
+            self.req_ctr += 1;
         }
+        self.acc_copies += self.copies;
         self.acc_cost += total_cost;
         total_cost
+    }
+
+    pub fn results(&self) -> (f64, usize, f64) {
+        (
+            self.acc_cost as f64 / self.req_ctr as f64, 
+            self.max_copies, 
+            self.acc_copies as f64 / self.req_ctr as f64
+        )
     }
 
 }
