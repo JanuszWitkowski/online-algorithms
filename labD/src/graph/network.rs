@@ -8,7 +8,7 @@ enum Phase {
 }
 
 #[derive(PartialEq, Clone, Copy)]
-enum RequestType {
+pub enum RequestType {
     READ,
     WRITE,
 }
@@ -25,6 +25,12 @@ struct Vertice {
 impl Vertice {
     fn new(id: usize, phase: Phase, has_copy: bool, d_value: usize) -> Self {
         Vertice{ id, counter: 0, phase, has_copy, d_value }
+    }
+
+    fn clear(&mut self, new_phase: Phase, new_has_copy: bool) {
+        self.counter = 0;
+        self.phase = new_phase;
+        self.has_copy = new_has_copy;
     }
 
     fn get_id(&self) -> usize {
@@ -75,6 +81,10 @@ impl Vertice {
         self.phase == Phase::FOUR
     }
 
+    fn set_d_value(&mut self, new_d: usize) {
+        self.d_value = new_d;
+    }
+
 }
 
 
@@ -106,6 +116,26 @@ impl Network {
             graph.vertices.push(Vertice::new(id, Phase::ONE, false, d));
         }
         graph
+    }
+
+    pub fn clear(&mut self) {
+        self.copies = 1;
+        self.max_copies = 1;
+        self.waiting = 1;
+        self.acc_cost = 0;
+        self.acc_copies = 1;
+        self.req_ctr = 0;
+        self.vertices[0].clear(Phase::FOUR, true);
+        for i in 1..self.vertices.len() {
+            self.vertices[i].clear(Phase::ONE, false);
+        }
+    }
+
+    pub fn set_d_value(&mut self, new_d: usize) {
+        self.d_value = new_d;
+        for i in 0..self.vertices.len() {
+            self.vertices[i].set_d_value(new_d);
+        }
     }
 
 
@@ -169,6 +199,9 @@ impl Network {
 
     fn request_on_vertice(&mut self, request_type: RequestType, request_id: usize, vertice_id: usize) -> usize {
         let mut cost = 0;
+        if request_id == vertice_id {
+            cost += self.request_cost(request_type, vertice_id);    // Both READ and WRITE
+        }
         loop {
             match self.vertice_get_phase(vertice_id) {
                 Phase::ONE => {
@@ -176,7 +209,6 @@ impl Network {
                         if (!self.vertice_counter_full(vertice_id) && request_type == RequestType::READ) || 
                                 (request_type == RequestType::WRITE && self.copies == 1 && self.waiting > 0) {
                             self.vertice_counter_inc(vertice_id);
-                            cost += self.request_cost(request_type, vertice_id);
                         }
                     }
                     if self.vertice_counter_full(vertice_id) {
@@ -191,10 +223,22 @@ impl Network {
                     if self.copies > self.max_copies {
                         self.max_copies = self.copies;
                     }
+                    cost += self.d_value;
                     self.vertice_set_phase(vertice_id, Phase::THREE);
                 },
                 Phase::THREE => {
-                    // todo: pamiętaj żeby przy wyjściu z tej fazy dodać waiting+=1
+                    if !self.vertice_counter_empty(vertice_id) && request_type == RequestType::WRITE && request_id != vertice_id {
+                        self.vertice_counter_dec(vertice_id);
+                    } 
+                    // else if request_id == vertice_id {    // Handle request
+                    //     cost += self.request_cost(request_type, vertice_id);
+                    // }
+                    if self.vertice_counter_empty(vertice_id) {
+                        self.vertice_set_phase(vertice_id, Phase::FOUR);
+                        self.waiting += 1;
+                    } else {
+                        break;
+                    }
                 },
                 Phase::FOUR => {
                     if self.vertices.iter().filter(|v| v.has_copy()).count() == 1 {
@@ -220,8 +264,8 @@ impl Network {
         for vertice_id in 1..=self.vertices.len() {
             cost = self.request_on_vertice(request_type, request_id, vertice_id);
             total_cost += cost;
-            self.req_ctr += 1;
         }
+        self.req_ctr += 1;
         self.acc_copies += self.copies;
         self.acc_cost += total_cost;
         total_cost
