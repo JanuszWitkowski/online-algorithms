@@ -8,7 +8,7 @@ mod experiment;
 fn main() {
     let n = 64;
     let number_of_requests = 65536;
-    let number_of_experiments = 10_000;
+    let number_of_experiments = 1_000;
     let ds = [16, 32, 64, 128, 256];
     let ps = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5];
 
