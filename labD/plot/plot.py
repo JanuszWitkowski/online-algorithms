@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import matplotlib.pyplot as plt
 import csv
 import numpy as np
@@ -8,9 +9,11 @@ D = [16, 32, 64, 128, 256]
 P = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5]
 cost = np.zeros((len(D),len(P)))
 copies = np.zeros((len(D),len(P)))
+costP = np.zeros((len(P),len(D)))
+copiesP = np.zeros((len(P),len(D)))
 
 if __name__ == "__main__":
-    with open("../results/2/total.csv") as csvfile:
+    with open("../results/4/total.csv") as csvfile:
             reader = csv.reader(csvfile, delimiter=';')
             for row_ in reader:
                 rows.append(row_)  # d, p, cost, copies
@@ -26,10 +29,19 @@ if __name__ == "__main__":
     for di in range(5):
         costs_l.append([])
         copies_l.append([])
+    # for di in range(5):
+    #     for pi in range(6):
+    #         costs_l[di].append(0.0)
+    #         copies_l[di].append(0.0)
+    # for di in range(5):
         for pi in range(6):
             # print(str(di+pi))
-            costs_l[di].append(float(rows[di+pi][2]))
-            copies_l[di].append(float(rows[di+pi][3]))
+
+            costs_l[di].append(float(rows[6*di+pi][2]))
+            copies_l[di].append(float(rows[6*di+pi][3]))
+            # costs_l[di][pi] = (float(rows[di+pi][2]))
+            # copies_l[di][pi] = (float(rows[di+pi][3]))
+
             # print("rows[di+pi][2]:", rows[di+pi][2])
             # print("rows[di+pi][3]:", rows[di+pi][3])
         # plt.plot(costs, label="D="+rows[di*6][0])
@@ -58,29 +70,49 @@ if __name__ == "__main__":
                 for j in range(len(P)):
                     # print("cost[i][j]: ", cost[i][j])
                     cost[i][j] = float(row[j])
+                    costP[j][i] = float(row[j])
 
     with open('copies.csv') as csvfile:
             reader = csv.reader(csvfile, delimiter=';')
             for i,row in enumerate(reader):
                 for j in range(len(P)):
                     copies[i][j] = float(row[j])
+                    copiesP[j][i] = float(row[j])
 
-    plt.figure().set_figwidth(10)
+    plt.figure(figsize=(16,8))
     for i,d in enumerate(D):
-        plt.plot(P, cost[i][:], label=d)
-    plt.xlabel('p')
-    plt.ylabel('avg_cost')
+        plt.plot(P, cost[i][:], label="D = "+str(d))
+    plt.xlabel('Prawdopodobieństwo żądania WRITE (p)')
+    plt.ylabel('Średni koszt żądania w algorytmie')
     plt.legend()
-    plt.savefig("cost_D.png", dpi=300)
+    plt.savefig("koszt_D.png", dpi=300)
     plt.close()
 
-    plt.figure().set_figwidth(10)
+    plt.figure(figsize=(16,8))
     for i,d in enumerate(D):
-        plt.plot(P, copies[i][:], label=d)
-    plt.xlabel('p')
-    plt.ylabel('max_copies')
+        plt.plot(P, copies[i][:], label="D = "+str(d))
+    plt.xlabel('Prawdopodobieństwo żądania WRITE (p)')
+    plt.ylabel('Średnie maksimum liczby kopii')
     plt.legend()
-    plt.savefig("copies_D.png", dpi=300)
+    plt.savefig("kopie_D.png", dpi=300)
+    plt.close()
+
+    plt.figure(figsize=(16,8))
+    for j,p in enumerate(P):
+        plt.plot(D, costP[j][:], label="P = "+str(p))
+    plt.xlabel('Koszt skopiowania zasobu (D)')
+    plt.ylabel('Średni koszt żądania w algorytmie')
+    plt.legend()
+    plt.savefig("koszt_P.png", dpi=300)
+    plt.close()
+
+    plt.figure(figsize=(16,8))
+    for j,p in enumerate(P):
+        plt.plot(D, copiesP[j][:], label="P = "+str(p))
+    plt.xlabel('Koszt skopiowania zasobu (D)')
+    plt.ylabel('Średnie maksimum liczby kopii')
+    plt.legend()
+    plt.savefig("kopie_P.png", dpi=300)
     plt.close()
     
     # ds = set()
